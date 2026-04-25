@@ -188,6 +188,7 @@
 
         <div class="tabs">
             <button class="tab-button active" onclick="switchTab('runs')">📋 Run List</button>
+            <button class="tab-button" onclick="switchTab('detail')">🔍 Run Detail</button>
             <button class="tab-button" onclick="switchTab('compare')">⚖️ Compare Runs</button>
             <button class="tab-button" onclick="switchTab('trends')">📈 Trends</button>
         </div>
@@ -196,6 +197,16 @@
             <h2>All Evaluation Runs</h2>
             <p class="info-text">Click a run name to rename it, or use the "Hide" button to remove it from the dashboard.</p>
             <div id="runs-table-container" class="loading">Loading runs...</div>
+        </div>
+
+        <div id="detail" class="tab-content">
+            <h2>Run Detail</h2>
+            <div class="controls">
+                <select id="detail-run-select" onchange="loadRunDetail()">
+                    <option value="">Select a run</option>
+                </select>
+            </div>
+            <div id="detail-container"></div>
         </div>
 
         <div id="compare" class="tab-content">
@@ -245,6 +256,13 @@
             return result;
         }
 
+        function getBenchmarkData(result) {
+            const benchmarks = result?.benchmarks || {};
+            const keys = Object.keys(benchmarks);
+            if (keys.length === 0) return null;
+            return benchmarks[keys[0]];
+        }
+
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
@@ -253,8 +271,11 @@
             if (tabName === 'trends') renderTrendsChart();
         }
 
-        function formatDate(runId) {
-            return new Date().toLocaleDateString();
+        function formatDate(timestamp) {
+            if (!timestamp) return '—';
+            const m = timestamp.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
+            if (!m) return timestamp;
+            return new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`).toLocaleString();
         }
 
         function formatDuration(seconds) {
@@ -283,8 +304,10 @@
                         <th>Run Name</th>
                         <th>Run ID</th>
                         <th>Score</th>
+                        <th>Status</th>
                         <th>Cost (USD)</th>
                         <th>Duration (s)</th>
+                        <th>Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -292,9 +315,12 @@
 
             for (const run of visibleRuns) {
                 const result = await fetchRunResult(run.run_id);
-                const score = result?.score || '—';
-                const cost = formatCost(result?.cost_usd);
-                const duration = formatDuration(result?.duration_s);
+                const bench = getBenchmarkData(result);
+                const score = bench?.score || '—';
+                const scoreLabel = bench?.score_label || '—';
+                const cost = formatCost(bench?.cost_usd);
+                const duration = formatDuration(bench?.duration_s);
+                const date = formatDate(result?.meta?.timestamp);
 
                 html += `<tr>
                     <td>
@@ -302,8 +328,10 @@
                     </td>
                     <td><code>${run.run_id}</code></td>
                     <td>${score}</td>
+                    <td>${scoreLabel}</td>
                     <td>${cost}</td>
                     <td>${duration}</td>
+                    <td>${date}</td>
                     <td>
                         <div class="action-buttons">
                             <button onclick="hideRun('${run.run_id}')">Hide</button>
@@ -345,7 +373,16 @@
                 const token = prompt('GitHub token (for editing):');
                 if (!token) return;
 
-                const response = await fetch(
+                const getResp = await fetch(
+                    `https://api.github.com/repos/${REPO}/contents/metadata.json`,
+                    {
+                        headers: { 'Authorization': `token ${token}` }
+                    }
+                );
+                if (!getResp.ok) throw new Error('Failed to fetch current file');
+                const current = await getResp.json();
+
+                const putResp = await fetch(
                     `https://api.github.com/repos/${REPO}/contents/metadata.json`,
                     {
                         method: 'PUT',
@@ -355,11 +392,13 @@
                         },
                         body: JSON.stringify({
                             message: 'update: edited run metadata',
-                            content: btoa(JSON.stringify(metadata, null, 2))
+                            content: btoa(JSON.stringify(metadata, null, 2)),
+                            sha: current.sha,
+                            branch: BRANCH
                         })
                     }
                 );
-                if (!response.ok) throw new Error('Failed to update');
+                if (!putResp.ok) throw new Error('Failed to update');
                 alert('Updated successfully!');
             } catch (e) {
                 alert('Error updating metadata: ' + e.message);
@@ -372,7 +411,9 @@
 
             const selectA = document.getElementById('run-a-select');
             const selectB = document.getElementById('run-b-select');
-            [selectA, selectB].forEach(select => {
+            const selectDetail = document.getElementById('detail-run-select');
+            [selectA, selectB, selectDetail].forEach(select => {
+                if (!select) return;
                 select.innerHTML = '<option value="">Select Run</option>';
                 visibleRuns.forEach(run => {
                     const name = run.name || `Run ${run.run_id.substring(0, 8)}`;
@@ -400,6 +441,14 @@
                 return;
             }
 
+            const benchA = getBenchmarkData(resultA);
+            const benchB = getBenchmarkData(resultB);
+
+            if (!benchA || !benchB) {
+                document.getElementById('comparison-container').innerHTML = '<p class="error">Missing benchmark data</p>';
+                return;
+            }
+
             const delta = (a, b) => {
                 if (a === undefined || b === undefined) return null;
                 const d = b - a;
@@ -420,45 +469,45 @@
                 <tbody>
                     <tr>
                         <td>Score</td>
-                        <td>${resultA.score || '—'}</td>
-                        <td>${resultB.score || '—'}</td>
-                        <td>${delta(resultA.score, resultB.score) || '—'}</td>
+                        <td>${benchA.score || '—'}</td>
+                        <td>${benchB.score || '—'}</td>
+                        <td>${delta(benchA.score, benchB.score) || '—'}</td>
                     </tr>
                     <tr>
                         <td>Cost (USD)</td>
-                        <td>${formatCost(resultA.cost_usd)}</td>
-                        <td>${formatCost(resultB.cost_usd)}</td>
-                        <td>${delta(resultA.cost_usd, resultB.cost_usd) || '—'}</td>
+                        <td>${formatCost(benchA.cost_usd)}</td>
+                        <td>${formatCost(benchB.cost_usd)}</td>
+                        <td>${delta(benchA.cost_usd, benchB.cost_usd) || '—'}</td>
                     </tr>
                     <tr>
                         <td>Duration (s)</td>
-                        <td>${formatDuration(resultA.duration_s)}</td>
-                        <td>${formatDuration(resultB.duration_s)}</td>
-                        <td>${delta(resultA.duration_s, resultB.duration_s) || '—'}</td>
+                        <td>${formatDuration(benchA.duration_s)}</td>
+                        <td>${formatDuration(benchB.duration_s)}</td>
+                        <td>${delta(benchA.duration_s, benchB.duration_s) || '—'}</td>
                     </tr>
                     <tr>
                         <td>Output Tokens</td>
-                        <td>${resultA.output_tokens || '—'}</td>
-                        <td>${resultB.output_tokens || '—'}</td>
-                        <td>${delta(resultA.output_tokens, resultB.output_tokens) || '—'}</td>
+                        <td>${benchA.output_tokens || '—'}</td>
+                        <td>${benchB.output_tokens || '—'}</td>
+                        <td>${delta(benchA.output_tokens, benchB.output_tokens) || '—'}</td>
                     </tr>
                     <tr>
                         <td>Cached Tokens</td>
-                        <td>${resultA.cached_tokens || '—'}</td>
-                        <td>${resultB.cached_tokens || '—'}</td>
-                        <td>${delta(resultA.cached_tokens, resultB.cached_tokens) || '—'}</td>
+                        <td>${benchA.cached_tokens || '—'}</td>
+                        <td>${benchB.cached_tokens || '—'}</td>
+                        <td>${delta(benchA.cached_tokens, benchB.cached_tokens) || '—'}</td>
                     </tr>
                     <tr>
                         <td>First Token Latency (s)</td>
-                        <td>${formatDuration(resultA.first_token_latency_s)}</td>
-                        <td>${formatDuration(resultB.first_token_latency_s)}</td>
-                        <td>${delta(resultA.first_token_latency_s, resultB.first_token_latency_s) || '—'}</td>
+                        <td>${formatDuration(benchA.first_token_latency_s)}</td>
+                        <td>${formatDuration(benchB.first_token_latency_s)}</td>
+                        <td>${delta(benchA.first_token_latency_s, benchB.first_token_latency_s) || '—'}</td>
                     </tr>
                     <tr>
                         <td>Syntax Error Rate</td>
-                        <td>${(resultA.syntax_error_rate || 0).toFixed(3)}</td>
-                        <td>${(resultB.syntax_error_rate || 0).toFixed(3)}</td>
-                        <td>${delta(resultA.syntax_error_rate, resultB.syntax_error_rate) || '—'}</td>
+                        <td>${(benchA.syntax_error_rate || 0).toFixed(3)}</td>
+                        <td>${(benchB.syntax_error_rate || 0).toFixed(3)}</td>
+                        <td>${delta(benchA.syntax_error_rate, benchB.syntax_error_rate) || '—'}</td>
                     </tr>
                 </tbody>
             </table>`;
@@ -479,11 +528,12 @@
             const data = [];
             for (const run of visibleRuns) {
                 const result = await fetchRunResult(run.run_id);
-                if (result) {
+                const bench = getBenchmarkData(result);
+                if (bench) {
                     data.push({
                         name: run.name || `Run ${run.run_id.substring(0, 8)}`,
-                        score: result.score,
-                        cost: result.cost_usd
+                        score: bench.score,
+                        cost: bench.cost_usd
                     });
                 }
             }
@@ -526,6 +576,108 @@
                     }
                 }
             });
+        }
+
+        async function loadRunDetail() {
+            const runId = document.getElementById('detail-run-select').value;
+            if (!runId) {
+                document.getElementById('detail-container').innerHTML = '';
+                return;
+            }
+
+            const metadata = await loadMetadata();
+            const run = metadata.runs.find(r => r.run_id === runId);
+            const result = await fetchRunResult(runId);
+            const bench = getBenchmarkData(result);
+
+            if (!result || !bench) {
+                document.getElementById('detail-container').innerHTML = '<p class="error">Failed to load run details</p>';
+                return;
+            }
+
+            const tokens = bench.tokens || {};
+            let html = '<div style="display: grid; gap: 30px;">';
+
+            html += '<div>';
+            html += '<h3>Meta & Summary</h3>';
+            html += `<table>
+                <tr><td><strong>Run Name</strong></td><td>${run.name || '(Unnamed)'}</td></tr>
+                <tr><td><strong>GitHub Run ID</strong></td><td><code>${runId}</code></td></tr>
+                <tr><td><strong>Commit</strong></td><td><code>${result.meta?.commit_sha || '—'}</code></td></tr>
+                <tr><td><strong>Branch</strong></td><td>${result.meta?.branch || '—'}</td></tr>
+                <tr><td><strong>Date</strong></td><td>${formatDate(result.meta?.timestamp)}</td></tr>
+                <tr><td><strong>Model</strong></td><td>${bench.model || '—'}</td></tr>
+                <tr><td><strong>Score</strong></td><td>${bench.score} (${bench.score_label || '—'})</td></tr>
+                <tr><td><strong>Cost</strong></td><td>${formatCost(bench.cost_usd)}</td></tr>
+                <tr><td><strong>Duration</strong></td><td>${formatDuration(bench.duration_s)}</td></tr>
+                <tr><td><strong>Scoring Reason</strong></td><td>${bench.scoring_reason || '—'}</td></tr>
+            </table>`;
+            html += '</div>';
+
+            html += '<div>';
+            html += '<h3>Token Usage</h3>';
+            html += `<table>
+                <tr><td><strong>Input Tokens</strong></td><td>${(tokens.input_tokens || 0).toLocaleString()}</td></tr>
+                <tr><td><strong>Output Tokens</strong></td><td>${(tokens.output_tokens || 0).toLocaleString()}</td></tr>
+                <tr><td><strong>Cached Tokens</strong></td><td>${(tokens.cached_tokens || 0).toLocaleString()}</td></tr>
+                <tr><td><strong>Total Tokens</strong></td><td>${(tokens.total_tokens || 0).toLocaleString()}</td></tr>
+                <tr><td><strong>API Calls</strong></td><td>${tokens.num_calls || '—'}</td></tr>
+                <tr><td><strong>Cache Hit Rate</strong></td><td>${tokens.cache_hit_rate !== undefined ? tokens.cache_hit_rate.toFixed(1) + '%' : '—'}</td></tr>
+                <tr><td><strong>Avg Input/Call</strong></td><td>${tokens.avg_input_per_call ? tokens.avg_input_per_call.toLocaleString() : '—'}</td></tr>
+                <tr><td><strong>Avg Output/Call</strong></td><td>${tokens.avg_output_per_call ? tokens.avg_output_per_call.toLocaleString() : '—'}</td></tr>
+            </table>`;
+            html += '</div>';
+
+            if (bench.files_written && bench.files_written.length > 0) {
+                html += '<div>';
+                html += '<h3>Files Written</h3>';
+                html += '<ul>';
+                bench.files_written.forEach(f => {
+                    const filename = f.split('/').pop();
+                    html += `<li>${filename}</li>`;
+                });
+                html += '</ul>';
+                html += '</div>';
+            }
+
+            if (bench.jac_check_results && bench.jac_check_results.length > 0) {
+                html += '<div>';
+                html += '<h3>Jac Check Results</h3>';
+                html += '<table style="font-size: 0.9em;"><thead><tr><th>File</th><th>Passed</th><th>Errors</th></tr></thead><tbody>';
+                bench.jac_check_results.forEach(r => {
+                    const filename = r.file.split('/').pop();
+                    const passed = r.passed ? '✓' : '✗';
+                    html += `<tr><td>${filename}</td><td>${passed}</td><td>${r.error_count}</td></tr>`;
+                });
+                html += '</tbody></table>';
+                html += '</div>';
+            }
+
+            if (bench.tool_timeline && bench.tool_timeline.length > 0) {
+                html += '<div>';
+                html += '<h3>Tool Timeline</h3>';
+                html += '<table style="font-size: 0.85em;"><thead><tr><th>Step</th><th>Tool</th><th>Status</th><th>Duration (ms)</th><th>Result</th></tr></thead><tbody>';
+                bench.tool_timeline.forEach(t => {
+                    const result = t.result_preview ? t.result_preview.substring(0, 20) + (t.result_preview.length > 20 ? '...' : '') : '';
+                    html += `<tr><td>${t.step}</td><td>${t.tool}</td><td>${t.status}</td><td>${t.duration_ms}</td><td>${result}</td></tr>`;
+                });
+                html += '</tbody></table>';
+                html += '</div>';
+            }
+
+            if (bench.tool_breakdown) {
+                html += '<div>';
+                html += '<h3>Tool Breakdown</h3>';
+                html += '<table style="font-size: 0.9em;"><thead><tr><th>Tool</th><th>Calls</th><th>Total Time (ms)</th><th>Errors</th></tr></thead><tbody>';
+                Object.entries(bench.tool_breakdown).forEach(([tool, stats]) => {
+                    html += `<tr><td>${tool}</td><td>${stats.count}</td><td>${stats.total_ms}</td><td>${stats.errors}</td></tr>`;
+                });
+                html += '</tbody></table>';
+                html += '</div>';
+            }
+
+            html += '</div>';
+            document.getElementById('detail-container').innerHTML = html;
         }
 
         async function loadDashboard() {
