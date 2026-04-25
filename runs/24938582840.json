@@ -1,0 +1,302 @@
+{
+  "meta": {
+    "commit_sha": "d275182",
+    "branch": "main",
+    "timestamp": "20260425T191734Z",
+    "run_id": "d275182_20260425T191734Z"
+  },
+  "benchmarks": {
+    "counter_widget": {
+      "benchmark_id": "counter_widget",
+      "model": "claude-sonnet-4-5-20250929",
+      "project_dir": "/tmp/jaceval_counter_widget_iiazzcrs",
+      "score": 3,
+      "score_label": "browser_pass",
+      "duration_s": 71.25,
+      "tokens": {
+        "input_tokens": 218303,
+        "output_tokens": 2709,
+        "cached_tokens": 191525,
+        "total_tokens": 221012,
+        "total_cost": 0.0,
+        "num_calls": 20,
+        "effective_input_tokens": 26778,
+        "avg_input_per_call": 10915,
+        "avg_output_per_call": 135,
+        "cache_hit_rate": 87.7
+      },
+      "cost_usd": 0.178427,
+      "files_written": [
+        "/tmp/jaceval_counter_widget_iiazzcrs/hello-world/jac.toml",
+        "/tmp/jaceval_counter_widget_iiazzcrs/hello-world/main.jac",
+        "/tmp/jaceval_counter_widget_iiazzcrs/hello-world/services/todo.sv.jac",
+        "/tmp/jaceval_counter_widget_iiazzcrs/hello-world/hooks/useItems.cl.jac",
+        "/tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/Header.cl.jac",
+        "/tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/ItemList.cl.jac",
+        "/tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/ItemCard.cl.jac",
+        "/tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/Layout.cl.jac",
+        "/tmp/jaceval_counter_widget_iiazzcrs/hello-world/lib/utils.cl.jac",
+        "/tmp/jaceval_counter_widget_iiazzcrs/hello-world/styles/global.css",
+        "/tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/HelloWorld.cl.jac"
+      ],
+      "jac_check_results": [
+        {
+          "file": "hello-world/components/Header.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/Header.cl.jac...\n/tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/Header.cl.jac PASSED [100%]\n\n=================================== FAILURES ===================================\n__ /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/Header.cl.jac ___\n\n============================== 1 passed in 1.24s ===============================\n\u26a0 warning[W3037]: Unnecessary '-> None' return type annotation on 'handle_click'; functions without a return statement implicitly return None [unnecessary-none-return]\n  --> /tmp/ja"
+        },
+        {
+          "file": "hello-world/components/HelloWorld.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/HelloWorld.cl.jac...\n/tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/HelloWorld.cl.jac PASSED [100%]\n============================== 1 passed in 1.23s ==============================="
+        },
+        {
+          "file": "hello-world/components/ItemCard.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/ItemCard.cl.jac...\n/tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/ItemCard.cl.jac PASSED [100%]\n\n=================================== FAILURES ===================================\n_ /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/ItemCard.cl.jac __\n\n============================== 1 passed in 1.26s ===============================\n\u26a0 warning[W2003]: 'e' is defined but never used\n  --> /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/ItemCard.cl.jac:2:23\n    1 | def:pub ItemCard(itemId: str, name"
+        },
+        {
+          "file": "hello-world/components/ItemList.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/ItemList.cl.jac...\n/tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/ItemList.cl.jac PASSED [100%]\n\n=================================== FAILURES ===================================\n_ /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/ItemList.cl.jac __\n\n============================== 1 passed in 1.28s ===============================\n\u26a0 warning[W2003]: 'e' is defined but never used\n  --> /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/ItemList.cl.jac:14:26\n   12 |     }\n   13 | \n   14 |     def ha"
+        },
+        {
+          "file": "hello-world/components/Layout.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/Layout.cl.jac...\n/tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/Layout.cl.jac PASSED [100%]\n\n=================================== FAILURES ===================================\n__ /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/Layout.cl.jac ___\n\n============================== 1 passed in 1.27s ===============================\n\u26a0 warning[W2003]: 'e' is defined but never used\n  --> /tmp/jaceval_counter_widget_iiazzcrs/hello-world/components/Layout.cl.jac:7:29\n    5 |     has theme: str = \"light\";\n    6 | \n "
+        },
+        {
+          "file": "hello-world/hooks/useItems.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 1,
+          "output": "Checking /tmp/jaceval_counter_widget_iiazzcrs/hello-world/hooks/useItems.cl.jac...\n/tmp/jaceval_counter_widget_iiazzcrs/hello-world/hooks/useItems.cl.jac PASSED [100%]\n\n=================================== FAILURES ===================================\n____ /tmp/jaceval_counter_widget_iiazzcrs/hello-world/hooks/useItems.cl.jac ____\n\n============================== 1 passed in 1.32s ===============================\n\u26a0 warning[W1036]: Generic type \"list\" used without type arguments, defaulting to \"list[Any]\"; consider adding explicit type arguments\n  --> /tmp/jaceval_counter_widget_iiazzcrs/hello-worl"
+        },
+        {
+          "file": "hello-world/lib/utils.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_iiazzcrs/hello-world/lib/utils.cl.jac...\n/tmp/jaceval_counter_widget_iiazzcrs/hello-world/lib/utils.cl.jac PASSED [100%]\n\n=================================== FAILURES ===================================\n______ /tmp/jaceval_counter_widget_iiazzcrs/hello-world/lib/utils.cl.jac _______\n\n============================== 1 passed in 1.29s ===============================\n\u26a0 warning[W1100]: Module not found\n  --> /tmp/jaceval_counter_widget_iiazzcrs/hello-world/lib/utils.cl.jac:1:13\n    1 | import from \"clsx\" { clsx }\n      |             ^^^^^^\n    2 | import from \"t"
+        },
+        {
+          "file": "hello-world/main.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_iiazzcrs/hello-world/main.jac...\n/tmp/jaceval_counter_widget_iiazzcrs/hello-world/main.jac PASSED [100%]\n============================== 1 passed in 1.24s ==============================="
+        },
+        {
+          "file": "hello-world/services/todo.sv.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_iiazzcrs/hello-world/services/todo.sv.jac...\n/tmp/jaceval_counter_widget_iiazzcrs/hello-world/services/todo.sv.jac PASSED [100%]\n============================== 1 passed in 1.34s ==============================="
+        }
+      ],
+      "browser_result": {
+        "passed": null,
+        "skipped": true,
+        "reason": "no browser_url in benchmark"
+      },
+      "functional_results": [
+        {
+          "description": "At least one .jac exists",
+          "passed": false,
+          "error": "name 'len' is not defined"
+        },
+        {
+          "description": "All .jac files pass jac check",
+          "passed": false,
+          "error": "name 'all' is not defined"
+        }
+      ],
+      "error": null,
+      "first_token_latency_s": null,
+      "syntax_error_rate": 0.0,
+      "output_tokens": 2709,
+      "cached_tokens": 191525,
+      "tool_timeline": [
+        {
+          "step": 1,
+          "tool": "think",
+          "status": "done",
+          "duration_ms": 10075,
+          "result_preview": ""
+        },
+        {
+          "step": 2,
+          "tool": "bash",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 3,
+          "tool": "scaffold",
+          "status": "done",
+          "duration_ms": 1822,
+          "result_preview": ""
+        },
+        {
+          "step": 4,
+          "tool": "scaffold",
+          "status": "done",
+          "duration_ms": 3004,
+          "result_preview": "-> 10 files"
+        },
+        {
+          "step": 5,
+          "tool": "think",
+          "status": "done",
+          "duration_ms": 2412,
+          "result_preview": ""
+        },
+        {
+          "step": 6,
+          "tool": "read",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> 9 lines"
+        },
+        {
+          "step": 7,
+          "tool": "write",
+          "status": "done",
+          "duration_ms": 305,
+          "result_preview": "-> 3 lines"
+        },
+        {
+          "step": 8,
+          "tool": "jac_check",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 9,
+          "tool": "edit",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 10,
+          "tool": "jac_check",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 11,
+          "tool": "bash",
+          "status": "done",
+          "duration_ms": 1034,
+          "result_preview": "-> PID 2880 listening on :8001"
+        },
+        {
+          "step": 12,
+          "tool": "bash",
+          "status": "done",
+          "duration_ms": 3006,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 13,
+          "tool": "browser_validate",
+          "status": "error",
+          "duration_ms": 0,
+          "result_preview": "-> FAIL: cannot open"
+        },
+        {
+          "step": 14,
+          "tool": "bash",
+          "status": "done",
+          "duration_ms": 23,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 15,
+          "tool": "think",
+          "status": "done",
+          "duration_ms": 1951,
+          "result_preview": ""
+        },
+        {
+          "step": 16,
+          "tool": "bash",
+          "status": "done",
+          "duration_ms": 3,
+          "result_preview": "-> 20 lines"
+        },
+        {
+          "step": 17,
+          "tool": "bash",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> 1 lines"
+        }
+      ],
+      "tool_breakdown": {
+        "think": {
+          "count": 3,
+          "total_ms": 14438,
+          "errors": 0
+        },
+        "bash": {
+          "count": 6,
+          "total_ms": 4070,
+          "errors": 0
+        },
+        "scaffold": {
+          "count": 2,
+          "total_ms": 4826,
+          "errors": 0
+        },
+        "read": {
+          "count": 1,
+          "total_ms": 2,
+          "errors": 0
+        },
+        "write": {
+          "count": 1,
+          "total_ms": 305,
+          "errors": 0
+        },
+        "jac_check": {
+          "count": 2,
+          "total_ms": 4,
+          "errors": 0
+        },
+        "edit": {
+          "count": 1,
+          "total_ms": 0,
+          "errors": 0
+        },
+        "browser_validate": {
+          "count": 1,
+          "total_ms": 0,
+          "errors": 1
+        }
+      },
+      "check_stats": {
+        "total": 0,
+        "pass": 0,
+        "fail": 0,
+        "first_pass_rate": null
+      },
+      "context_compactions": 0,
+      "scoring_reason": "browser passed but some functional checks failed"
+    }
+  }
+}
