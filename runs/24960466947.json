@@ -1,0 +1,224 @@
+{
+  "meta": {
+    "commit_sha": "1189bb6",
+    "branch": "eval-refactor",
+    "timestamp": "20260426T154124Z",
+    "run_id": "1189bb6_20260426T154124Z"
+  },
+  "benchmarks": {
+    "counter_widget": {
+      "benchmark_id": "counter_widget",
+      "model": "claude-sonnet-4-5-20250929",
+      "project_dir": "/tmp/jaceval_counter_widget_4d5bjf4b",
+      "score": 3,
+      "score_label": "browser_pass",
+      "duration_s": 49.27,
+      "tokens": {
+        "input_tokens": 144624,
+        "output_tokens": 1785,
+        "cached_tokens": 123565,
+        "total_tokens": 146409,
+        "total_cost": 0.0,
+        "num_calls": 14,
+        "effective_input_tokens": 21059,
+        "avg_input_per_call": 10330,
+        "avg_output_per_call": 127,
+        "cache_hit_rate": 85.4
+      },
+      "cost_usd": 0.0,
+      "files_written": [
+        "/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/main.jac"
+      ],
+      "files_scaffolded": [
+        "/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/jac.toml",
+        "/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/main.jac",
+        "/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Header.cl.jac",
+        "/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Counter.cl.jac",
+        "/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Layout.cl.jac",
+        "/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/lib/utils.cl.jac",
+        "/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/styles/global.css"
+      ],
+      "num_llm_calls": 14,
+      "jac_check_results": [
+        {
+          "file": "hello-world/components/Counter.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Counter.cl.jac...\n/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Counter.cl.jac PASSED [100%]\n\n=================================== FAILURES ===================================\n__ /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Counter.cl.jac __\n\n============================== 1 passed in 1.11s ===============================\n\u26a0 warning[W2003]: 'e' is defined but never used\n  --> /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Counter.cl.jac:4:26\n    2 |     has count: int = 0;\n    3 | \n    "
+        },
+        {
+          "file": "hello-world/components/Header.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Header.cl.jac...\n/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Header.cl.jac PASSED [100%]\n\n=================================== FAILURES ===================================\n__ /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Header.cl.jac ___\n\n============================== 1 passed in 1.07s ===============================\n\u26a0 warning[W3037]: Unnecessary '-> None' return type annotation on 'handle_click'; functions without a return statement implicitly return None [unnecessary-none-return]\n  --> /tmp/ja"
+        },
+        {
+          "file": "hello-world/components/Layout.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Layout.cl.jac...\n/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Layout.cl.jac PASSED [100%]\n\n=================================== FAILURES ===================================\n__ /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Layout.cl.jac ___\n\n============================== 1 passed in 1.09s ===============================\n\u26a0 warning[W2003]: 'e' is defined but never used\n  --> /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/components/Layout.cl.jac:7:29\n    5 |     has theme: str = \"light\";\n    6 | \n "
+        },
+        {
+          "file": "hello-world/lib/utils.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/lib/utils.cl.jac...\n/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/lib/utils.cl.jac PASSED [100%]\n\n=================================== FAILURES ===================================\n______ /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/lib/utils.cl.jac _______\n\n============================== 1 passed in 1.11s ===============================\n\u26a0 warning[W1100]: Module not found\n  --> /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/lib/utils.cl.jac:1:13\n    1 | import from \"clsx\" { clsx }\n      |             ^^^^^^\n    2 | import from \"t"
+        },
+        {
+          "file": "hello-world/main.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_4d5bjf4b/hello-world/main.jac...\n/tmp/jaceval_counter_widget_4d5bjf4b/hello-world/main.jac PASSED [100%]\n============================== 1 passed in 1.09s ==============================="
+        }
+      ],
+      "browser_result": {
+        "passed": null,
+        "skipped": true,
+        "reason": "no browser_url in benchmark"
+      },
+      "functional_results": [
+        {
+          "description": "At least one .jac exists",
+          "passed": false,
+          "error": "name 'len' is not defined"
+        },
+        {
+          "description": "All .jac files pass jac check",
+          "passed": false,
+          "error": "name 'all' is not defined"
+        }
+      ],
+      "error": null,
+      "syntax_error_rate": 0.0,
+      "output_tokens": 1785,
+      "cached_tokens": 123565,
+      "tool_timeline": [
+        {
+          "step": 1,
+          "tool": "bash",
+          "args": "pwd",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 2,
+          "tool": "scaffold",
+          "args": "client project 'hello-world' in ",
+          "status": "done",
+          "duration_ms": 1843,
+          "result_preview": ""
+        },
+        {
+          "step": 3,
+          "tool": "scaffold",
+          "args": "frontend project 'hello-world' in ",
+          "status": "done",
+          "duration_ms": 2102,
+          "result_preview": "-> 7 files"
+        },
+        {
+          "step": 4,
+          "tool": "read",
+          "args": "hello-world/main.jac",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> 7 lines"
+        },
+        {
+          "step": 5,
+          "tool": "write",
+          "args": "hello-world/main.jac",
+          "status": "done",
+          "duration_ms": 301,
+          "result_preview": "-> 5 lines"
+        },
+        {
+          "step": 6,
+          "tool": "jac_check",
+          "args": "hello-world/main.jac",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 7,
+          "tool": "bash",
+          "args": "jac start --dev main.jac",
+          "status": "done",
+          "duration_ms": 1029,
+          "result_preview": "-> PID 2877 listening on :8001"
+        },
+        {
+          "step": 8,
+          "tool": "bash",
+          "args": "for i in {1..10}; do curl -s http://localhost:8001/ > /dev/null && echo \"Ready\" ...",
+          "status": "done",
+          "duration_ms": 14,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 9,
+          "tool": "browser_validate",
+          "args": "http://localhost:8001",
+          "status": "error",
+          "duration_ms": 0,
+          "result_preview": "-> FAIL: cannot open"
+        },
+        {
+          "step": 10,
+          "tool": "bash",
+          "args": "curl -s http://localhost:8001/",
+          "status": "done",
+          "duration_ms": 7,
+          "result_preview": "-> 1 lines"
+        }
+      ],
+      "tool_breakdown": {
+        "bash": {
+          "count": 4,
+          "total_ms": 1052,
+          "errors": 0
+        },
+        "scaffold": {
+          "count": 2,
+          "total_ms": 3945,
+          "errors": 0
+        },
+        "read": {
+          "count": 1,
+          "total_ms": 2,
+          "errors": 0
+        },
+        "write": {
+          "count": 1,
+          "total_ms": 301,
+          "errors": 0
+        },
+        "jac_check": {
+          "count": 1,
+          "total_ms": 2,
+          "errors": 0
+        },
+        "browser_validate": {
+          "count": 1,
+          "total_ms": 0,
+          "errors": 1
+        }
+      },
+      "check_stats": {
+        "total": 0,
+        "pass": 0,
+        "fail": 0,
+        "first_pass_rate": null
+      },
+      "context_compactions": 0,
+      "scoring_reason": "browser passed but some functional checks failed"
+    }
+  }
+}
