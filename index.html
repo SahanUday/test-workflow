@@ -260,6 +260,10 @@
             border-left: 3px solid #f59e0b;
             padding-left: 12px;
         }
+
+        tr.run-group-start td {
+            border-top: 2px solid #f3d5c2;
+        }
     </style>
 </head>
 <body>
@@ -288,6 +292,8 @@
                 <select id="detail-run-select" onchange="loadRunDetail()">
                     <option value="">Select a run</option>
                 </select>
+                <select id="detail-bench-select" onchange="renderSelectedBenchDetail()" style="display:none">
+                </select>
             </div>
             <div id="detail-container"></div>
         </div>
@@ -295,12 +301,14 @@
         <div id="compare" class="tab-content">
             <h2>Compare Two Runs</h2>
             <div class="controls">
-                <select id="run-a-select" onchange="updateComparison()">
+                <select id="run-a-select" onchange="updateRunABenchmarks()">
                     <option value="">Select Run A</option>
                 </select>
-                <select id="run-b-select" onchange="updateComparison()">
+                <select id="run-a-bench" onchange="updateComparison()" style="display:none"></select>
+                <select id="run-b-select" onchange="updateRunBBenchmarks()">
                     <option value="">Select Run B</option>
                 </select>
+                <select id="run-b-bench" onchange="updateComparison()" style="display:none"></select>
                 <button onclick="resetComparison()">Reset</button>
             </div>
             <div id="comparison-container"></div>
@@ -308,6 +316,11 @@
 
         <div id="trends" class="tab-content">
             <h2>Evaluation Trends</h2>
+            <div class="controls">
+                <select id="trends-bench-select" onchange="renderTrendsChart()">
+                    <option value="">Select benchmark...</option>
+                </select>
+            </div>
             <div class="chart-container">
                 <canvas id="trendsChart"></canvas>
             </div>
@@ -339,11 +352,8 @@
             return result;
         }
 
-        function getBenchmarkData(result) {
-            const benchmarks = result?.benchmarks || {};
-            const keys = Object.keys(benchmarks);
-            if (keys.length === 0) return null;
-            return benchmarks[keys[0]];
+        function getAllBenchmarks(result) {
+            return result?.benchmarks || {};
         }
 
         function switchTab(tabName) {
@@ -385,6 +395,7 @@
                 <thead>
                     <tr>
                         <th>Run Name</th>
+                        <th>Benchmark</th>
                         <th>Run ID</th>
                         <th>Score</th>
                         <th>Status</th>
@@ -398,29 +409,40 @@
 
             for (const run of visibleRuns) {
                 const result = await fetchRunResult(run.run_id);
-                const bench = getBenchmarkData(result);
-                const score = bench?.score || '—';
-                const scoreLabel = bench?.score_label || '—';
-                const cost = formatCost(bench?.cost_usd);
-                const duration = formatDuration(bench?.duration_s);
+                const benchmarks = getAllBenchmarks(result);
+                const benchmarkEntries = Object.entries(benchmarks);
                 const date = formatDate(result?.meta?.timestamp);
 
-                html += `<tr>
-                    <td>
-                        <span class="run-name" onclick="editRunName('${run.run_id}', this)">${run.name || '(Unnamed)'}</span>
-                    </td>
-                    <td><code>${run.run_id}</code></td>
-                    <td>${score}</td>
-                    <td>${scoreLabel}</td>
-                    <td>${cost}</td>
-                    <td>${duration}</td>
-                    <td>${date}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button onclick="hideRun('${run.run_id}')">Hide</button>
-                        </div>
-                    </td>
-                </tr>`;
+                if (benchmarkEntries.length === 0) {
+                    html += `<tr>
+                        <td><span class="run-name" onclick="editRunName('${run.run_id}', this)">${run.name || '(Unnamed)'}</span></td>
+                        <td colspan="6">No benchmarks</td>
+                        <td>${date}</td>
+                        <td><div class="action-buttons"><button onclick="hideRun('${run.run_id}')">Hide</button></div></td>
+                    </tr>`;
+                } else {
+                    benchmarkEntries.forEach(([benchId, bench], i) => {
+                        const isFirst = i === 0;
+                        const runNameCell = isFirst ? `<span class="run-name" onclick="editRunName('${run.run_id}', this)">${run.name || '(Unnamed)'}</span>` : '';
+                        const actionsCell = isFirst ? `<div class="action-buttons"><button onclick="hideRun('${run.run_id}')">Hide</button></div>` : '';
+                        const rowClass = isFirst ? ' class="run-group-start"' : '';
+                        const score = bench?.score || '—';
+                        const scoreLabel = bench?.score_label || '—';
+                        const cost = formatCost(bench?.cost_usd);
+                        const duration = formatDuration(bench?.duration_s);
+                        html += `<tr${rowClass}>
+                            <td>${runNameCell}</td>
+                            <td><code>${benchId}</code></td>
+                            <td><code>${run.run_id}</code></td>
+                            <td>${score}</td>
+                            <td>${scoreLabel}</td>
+                            <td>${cost}</td>
+                            <td>${duration}</td>
+                            <td>${isFirst ? date : ''}</td>
+                            <td>${actionsCell}</td>
+                        </tr>`;
+                    });
+                }
             }
 
             html += '</tbody></table>';
@@ -507,6 +529,28 @@
             allRuns = visibleRuns;
         }
 
+        async function updateRunABenchmarks() {
+            const runId = document.getElementById('run-a-select').value;
+            const sel = document.getElementById('run-a-bench');
+            await _populateBenchSelect(runId, sel);
+            await updateComparison();
+        }
+
+        async function updateRunBBenchmarks() {
+            const runId = document.getElementById('run-b-select').value;
+            const sel = document.getElementById('run-b-bench');
+            await _populateBenchSelect(runId, sel);
+            await updateComparison();
+        }
+
+        async function _populateBenchSelect(runId, selectEl) {
+            if (!runId) { selectEl.style.display = 'none'; return; }
+            const result = await fetchRunResult(runId);
+            const ids = Object.keys(getAllBenchmarks(result));
+            selectEl.innerHTML = ids.map(id => `<option value="${id}">${id}</option>`).join('');
+            selectEl.style.display = ids.length > 1 ? '' : 'none';
+        }
+
         async function updateComparison() {
             const aId = document.getElementById('run-a-select').value;
             const bId = document.getElementById('run-b-select').value;
@@ -524,8 +568,10 @@
                 return;
             }
 
-            const benchA = getBenchmarkData(resultA);
-            const benchB = getBenchmarkData(resultB);
+            const aBenchId = document.getElementById('run-a-bench').value;
+            const bBenchId = document.getElementById('run-b-bench').value;
+            const benchA = getAllBenchmarks(resultA)[aBenchId] || null;
+            const benchB = getAllBenchmarks(resultB)[bBenchId] || null;
 
             if (!benchA || !benchB) {
                 document.getElementById('comparison-container').innerHTML = '<p class="error">Missing benchmark data</p>';
@@ -601,6 +647,8 @@
         function resetComparison() {
             document.getElementById('run-a-select').value = '';
             document.getElementById('run-b-select').value = '';
+            document.getElementById('run-a-bench').style.display = 'none';
+            document.getElementById('run-b-bench').style.display = 'none';
             document.getElementById('comparison-container').innerHTML = '';
         }
 
@@ -608,10 +656,31 @@
             const metadata = await loadMetadata();
             const visibleRuns = metadata.runs.filter(r => !r.hidden);
 
+            // Collect all benchmark IDs across runs
+            const allBenchIds = new Set();
+            for (const run of visibleRuns) {
+                const result = await fetchRunResult(run.run_id);
+                Object.keys(getAllBenchmarks(result)).forEach(id => allBenchIds.add(id));
+            }
+
+            const benchSel = document.getElementById('trends-bench-select');
+            if (benchSel.options.length <= 1 && allBenchIds.size > 0) {
+                // Populate on first render
+                allBenchIds.forEach(id => {
+                    const opt = document.createElement('option');
+                    opt.value = id; opt.textContent = id;
+                    benchSel.appendChild(opt);
+                });
+                benchSel.value = [...allBenchIds][0]; // auto-select first
+            }
+
+            const selectedBenchId = benchSel.value;
+            if (!selectedBenchId) return;
+
             const data = [];
             for (const run of visibleRuns) {
                 const result = await fetchRunResult(run.run_id);
-                const bench = getBenchmarkData(result);
+                const bench = getAllBenchmarks(result)[selectedBenchId] || null;
                 if (bench) {
                     data.push({
                         name: run.name || `Run ${run.run_id.substring(0, 8)}`,
@@ -673,15 +742,33 @@
 
         async function loadRunDetail() {
             const runId = document.getElementById('detail-run-select').value;
+            const benchSelect = document.getElementById('detail-bench-select');
             if (!runId) {
                 document.getElementById('detail-container').innerHTML = '';
+                benchSelect.style.display = 'none';
                 return;
             }
+            const result = await fetchRunResult(runId);
+            const benchmarks = getAllBenchmarks(result);
+            const benchIds = Object.keys(benchmarks);
+
+            // Populate benchmark selector
+            benchSelect.innerHTML = benchIds.map(id => `<option value="${id}">${id}</option>`).join('');
+            benchSelect.style.display = benchIds.length > 1 ? '' : 'none';
+
+            await renderSelectedBenchDetail();
+        }
+
+        async function renderSelectedBenchDetail() {
+            const runId = document.getElementById('detail-run-select').value;
+            const benchId = document.getElementById('detail-bench-select').value;
+            if (!runId) return;
 
             const metadata = await loadMetadata();
             const run = metadata.runs.find(r => r.run_id === runId);
             const result = await fetchRunResult(runId);
-            const bench = getBenchmarkData(result);
+            const benchmarks = getAllBenchmarks(result);
+            const bench = benchmarks[benchId] || null;
 
             if (!result || !bench) {
                 document.getElementById('detail-container').innerHTML = '<p class="error">Failed to load run details</p>';
