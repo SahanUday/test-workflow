@@ -1,0 +1,476 @@
+{
+  "meta": {
+    "commit_sha": "719179d",
+    "branch": "main",
+    "timestamp": "20260427T123637Z",
+    "run_id": "719179d_20260427T123637Z"
+  },
+  "benchmarks": {
+    "counter_widget": {
+      "benchmark_id": "counter_widget",
+      "model": "claude-sonnet-4-5-20250929",
+      "project_dir": "/tmp/jaceval_counter_widget_t4wfffv2",
+      "score": 1,
+      "score_label": "check_fail",
+      "duration_s": 203.09,
+      "tokens": {
+        "input_tokens": 1186179,
+        "output_tokens": 7023,
+        "cached_tokens": 1068862,
+        "total_tokens": 1193202,
+        "total_cost": 0.870673,
+        "num_calls": 46,
+        "effective_input_tokens": 117317,
+        "avg_input_per_call": 25786,
+        "avg_output_per_call": 152,
+        "cache_hit_rate": 90.1,
+        "avg_cost_per_call": 0.018928
+      },
+      "cost_usd": 0.870673,
+      "files_written": [
+        "/tmp/jaceval_counter_widget_t4wfffv2/hello-world/jac.toml",
+        "/tmp/jaceval_counter_widget_t4wfffv2/hello-world/main.jac",
+        "/tmp/jaceval_counter_widget_t4wfffv2/hello-world/components/HelloWorld.cl.jac",
+        "/tmp/jaceval_counter_widget_t4wfffv2/hello-world/README.md"
+      ],
+      "files_scaffolded": [],
+      "num_llm_calls": 46,
+      "jac_check_results": [
+        {
+          "file": "hello-world/.jac",
+          "passed": false,
+          "returncode": 1,
+          "error_count": 2,
+          "output": "Checking /tmp/jaceval_counter_widget_t4wfffv2/hello-world/.jac...\n/tmp/jaceval_counter_widget_t4wfffv2/hello-world/.jac FAILED [100%]\n\n=================================== FAILURES ===================================\n____________ /tmp/jaceval_counter_widget_t4wfffv2/hello-world/.jac _____________\n\n================================= failed files =================================\n/tmp/jaceval_counter_widget_t4wfffv2/hello-world/.jac - 0 errors, 0 warnings\n============================== 1 failed in 0.00s ===============================\n\u2716 Error: Error checking '/tmp/jaceval_counter_widget_t4wfffv2/h"
+        },
+        {
+          "file": "hello-world/components/HelloWorld.cl.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_t4wfffv2/hello-world/components/HelloWorld.cl.jac...\n/tmp/jaceval_counter_widget_t4wfffv2/hello-world/components/HelloWorld.cl.jac PASSED [100%]\n============================== 1 passed in 1.17s ==============================="
+        },
+        {
+          "file": "hello-world/main.jac",
+          "passed": true,
+          "returncode": 0,
+          "error_count": 0,
+          "output": "Checking /tmp/jaceval_counter_widget_t4wfffv2/hello-world/main.jac...\n/tmp/jaceval_counter_widget_t4wfffv2/hello-world/main.jac PASSED [100%]\n============================== 1 passed in 1.25s ==============================="
+        }
+      ],
+      "browser_result": null,
+      "functional_results": [],
+      "error": null,
+      "syntax_error_rate": 0.333,
+      "output_tokens": 7023,
+      "cached_tokens": 1068862,
+      "tool_timeline": [
+        {
+          "step": 1,
+          "tool": "think",
+          "args": "The user wants a simple UI page showing \"Hello World\" with no backend and no sty...",
+          "status": "done",
+          "duration_ms": 1513,
+          "result_preview": ""
+        },
+        {
+          "step": 2,
+          "tool": "load_jac_skill",
+          "args": "jac-fullstack-patterns",
+          "status": "done",
+          "duration_ms": 1,
+          "result_preview": "-> 37 lines"
+        },
+        {
+          "step": 3,
+          "tool": "bash",
+          "args": "pwd",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 4,
+          "tool": "bash",
+          "args": "jac create hello-world --use client",
+          "status": "done",
+          "duration_ms": 296,
+          "result_preview": "-> 6 lines"
+        },
+        {
+          "step": 5,
+          "tool": "bash",
+          "args": "jac create hello-world --list-templates",
+          "status": "done",
+          "duration_ms": 298,
+          "result_preview": "-> 3 lines"
+        },
+        {
+          "step": 6,
+          "tool": "bash",
+          "args": "jac create hello-world",
+          "status": "done",
+          "duration_ms": 294,
+          "result_preview": "-> 17 lines"
+        },
+        {
+          "step": 7,
+          "tool": "read",
+          "args": "hello-world/jac.toml",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> 10 lines"
+        },
+        {
+          "step": 8,
+          "tool": "read",
+          "args": "hello-world/main.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 5 lines"
+        },
+        {
+          "step": 9,
+          "tool": "load_jac_skill",
+          "args": "jac-cl-components",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 108 lines"
+        },
+        {
+          "step": 10,
+          "tool": "write",
+          "args": "hello-world/jac.toml",
+          "status": "done",
+          "duration_ms": 300,
+          "result_preview": "-> 12 lines"
+        },
+        {
+          "step": 11,
+          "tool": "write",
+          "args": "hello-world/main.jac",
+          "status": "done",
+          "duration_ms": 301,
+          "result_preview": "-> 8 lines"
+        },
+        {
+          "step": 12,
+          "tool": "jac_check",
+          "args": "hello-world/main.jac",
+          "status": "done",
+          "duration_ms": 3,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 13,
+          "tool": "bash",
+          "args": "mkdir -p components",
+          "status": "done",
+          "duration_ms": 3,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 14,
+          "tool": "write",
+          "args": "hello-world/components/HelloWorld.cl.jac",
+          "status": "done",
+          "duration_ms": 304,
+          "result_preview": "-> 7 lines"
+        },
+        {
+          "step": 15,
+          "tool": "jac_check",
+          "args": "hello-world/components/HelloWorld.cl.jac",
+          "status": "done",
+          "duration_ms": 4,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 16,
+          "tool": "bash",
+          "args": "jac install",
+          "status": "done",
+          "duration_ms": 297,
+          "result_preview": "-> 5 lines"
+        },
+        {
+          "step": 17,
+          "tool": "bash",
+          "args": "jac start --dev main.jac",
+          "status": "done",
+          "duration_ms": 1034,
+          "result_preview": "-> PID 2898 listening on :8001"
+        },
+        {
+          "step": 18,
+          "tool": "bash",
+          "args": "sleep 5 && curl -s http://localhost:8001/ | head -20",
+          "status": "done",
+          "duration_ms": 5012,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 19,
+          "tool": "browser_validate",
+          "args": "http://localhost:8001/",
+          "status": "error",
+          "duration_ms": 0,
+          "result_preview": "-> FAIL: cannot open"
+        },
+        {
+          "step": 20,
+          "tool": "bash",
+          "args": "curl -s http://localhost:8001/cl/app | head -30",
+          "status": "done",
+          "duration_ms": 23,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 21,
+          "tool": "bash",
+          "args": "tail -50 .jac-server.log",
+          "status": "done",
+          "duration_ms": 3,
+          "result_preview": "-> 43 lines"
+        },
+        {
+          "step": 22,
+          "tool": "bash",
+          "args": "curl -s http://localhost:8000/ 2>&1 | head -20",
+          "status": "done",
+          "duration_ms": 8,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 23,
+          "tool": "bash",
+          "args": "curl -v http://localhost:8000/ 2>&1 | head -30",
+          "status": "done",
+          "duration_ms": 8,
+          "result_preview": "-> 15 lines"
+        },
+        {
+          "step": 24,
+          "tool": "bash",
+          "args": "pip list | grep jac",
+          "status": "done",
+          "duration_ms": 291,
+          "result_preview": "-> 3 lines"
+        },
+        {
+          "step": 25,
+          "tool": "bash",
+          "args": "pip install jac-client",
+          "status": "done",
+          "duration_ms": 736,
+          "result_preview": "-> 12 lines"
+        },
+        {
+          "step": 26,
+          "tool": "bash",
+          "args": "kill 2898",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 27,
+          "tool": "bash",
+          "args": "sleep 2",
+          "status": "done",
+          "duration_ms": 2003,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 28,
+          "tool": "bash",
+          "args": "jac start --dev main.jac",
+          "status": "done",
+          "duration_ms": 1019,
+          "result_preview": "-> PID 3030 listening on :8001"
+        },
+        {
+          "step": 29,
+          "tool": "bash",
+          "args": "sleep 8 && curl -s http://localhost:8001/cl/app | head -20",
+          "status": "done",
+          "duration_ms": 10705,
+          "result_preview": "-> 3 lines"
+        },
+        {
+          "step": 30,
+          "tool": "bash",
+          "args": "tail -40 .jac-server.log",
+          "status": "done",
+          "duration_ms": 3,
+          "result_preview": "-> 40 lines"
+        },
+        {
+          "step": 31,
+          "tool": "bash",
+          "args": "curl -s http://localhost:8000/ 2>&1 | head -20",
+          "status": "done",
+          "duration_ms": 38,
+          "result_preview": "-> 20 lines"
+        },
+        {
+          "step": 32,
+          "tool": "bash",
+          "args": "curl -s http://localhost:8001/cl/app 2>&1",
+          "status": "done",
+          "duration_ms": 9,
+          "result_preview": "-> 3 lines"
+        },
+        {
+          "step": 33,
+          "tool": "bash",
+          "args": "curl -s \"http://localhost:8001/static/client.js?hash=d2adbdf32e867d90abe17df1429...",
+          "status": "done",
+          "duration_ms": 10,
+          "result_preview": "-> 30 lines"
+        },
+        {
+          "step": 34,
+          "tool": "bash",
+          "args": "grep -i \"error\\|warning\" .jac-server.log | tail -20",
+          "status": "done",
+          "duration_ms": 4,
+          "result_preview": "-> 3 lines"
+        },
+        {
+          "step": 35,
+          "tool": "bash",
+          "args": "find .jac -name \"*.py\" -path \"*main*\" 2>/dev/null | head -5",
+          "status": "done",
+          "duration_ms": 24,
+          "result_preview": "-> 5 lines"
+        },
+        {
+          "step": 36,
+          "tool": "bash",
+          "args": "ls -la .jac/*.py 2>/dev/null | head -10",
+          "status": "done",
+          "duration_ms": 4,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 37,
+          "tool": "bash",
+          "args": "find .jac/client -name \"*.js\" -o -name \"*.jsx\" 2>/dev/null | grep -E \"(main|Hell...",
+          "status": "done",
+          "duration_ms": 23,
+          "result_preview": "-> 5 lines"
+        },
+        {
+          "step": 38,
+          "tool": "bash",
+          "args": "cat .jac/client/compiled/components/HelloWorld.js",
+          "status": "done",
+          "duration_ms": 3,
+          "result_preview": "-> 7 lines"
+        },
+        {
+          "step": 39,
+          "tool": "bash",
+          "args": "cat .jac/client/compiled/main.js",
+          "status": "done",
+          "duration_ms": 3,
+          "result_preview": "-> 8 lines"
+        },
+        {
+          "step": 40,
+          "tool": "bash",
+          "args": "curl -s http://localhost:8001/cl/app 2>&1 | grep -o \"Hello World\" | head -1",
+          "status": "done",
+          "duration_ms": 10,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 41,
+          "tool": "bash",
+          "args": "tree -L 2 -I 'node_modules|venv|__pycache__' hello-world 2>/dev/null || find hel...",
+          "status": "done",
+          "duration_ms": 4,
+          "result_preview": "-> 7 lines"
+        },
+        {
+          "step": 42,
+          "tool": "bash",
+          "args": "ps aux | grep \"jac start\" | grep -v grep",
+          "status": "done",
+          "duration_ms": 15164,
+          "result_preview": "-> PID 3203 started (port not yet detected)"
+        },
+        {
+          "step": 43,
+          "tool": "bash",
+          "args": "curl -s http://localhost:8001/ 2>&1 | head -5",
+          "status": "done",
+          "duration_ms": 9,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 44,
+          "tool": "write",
+          "args": "hello-world/README.md",
+          "status": "done",
+          "duration_ms": 300,
+          "result_preview": "-> 57 lines"
+        },
+        {
+          "step": 45,
+          "tool": "bash",
+          "args": "curl -s http://localhost:8001/cl/app | grep -E \"(script|Hello)\" | head -5",
+          "status": "done",
+          "duration_ms": 10,
+          "result_preview": "-> 1 lines"
+        }
+      ],
+      "tool_breakdown": {
+        "think": {
+          "count": 1,
+          "total_ms": 1513,
+          "errors": 0
+        },
+        "load_jac_skill": {
+          "count": 2,
+          "total_ms": 1,
+          "errors": 0
+        },
+        "bash": {
+          "count": 33,
+          "total_ms": 37352,
+          "errors": 0
+        },
+        "read": {
+          "count": 2,
+          "total_ms": 2,
+          "errors": 0
+        },
+        "write": {
+          "count": 4,
+          "total_ms": 1205,
+          "errors": 0
+        },
+        "jac_check": {
+          "count": 2,
+          "total_ms": 7,
+          "errors": 0
+        },
+        "browser_validate": {
+          "count": 1,
+          "total_ms": 0,
+          "errors": 1
+        }
+      },
+      "check_stats": {
+        "total": 0,
+        "pass": 0,
+        "fail": 0,
+        "first_pass_rate": null
+      },
+      "context_compactions": 0,
+      "scoring_reason": "one or more files failed jac check"
+    }
+  }
+}
