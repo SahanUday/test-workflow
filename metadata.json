@@ -2,37 +2,17 @@
   "runs": [
     {
       "run_id": "24936334982",
-      "name": "",
+      "name": "eval-1",
       "hidden": false
     },
     {
       "run_id": "24938582840",
-      "name": "",
+      "name": "eval-2",
       "hidden": false
     },
     {
       "run_id": "24940579921",
       "name": "eval-3",
-      "hidden": false
-    },
-    {
-      "run_id": "24960466947",
-      "name": "eval-4",
-      "hidden": false
-    },
-    {
-      "run_id": "24960893393",
-      "name": "eval-5",
-      "hidden": false
-    },
-    {
-      "run_id": "24961339888",
-      "name": "eval-6",
-      "hidden": false
-    },
-    {
-      "run_id": "24964061713",
-      "name": "eval-7",
       "hidden": false
     },
     {
