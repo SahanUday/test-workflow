@@ -264,6 +264,154 @@
         tr.run-group-start td {
             border-top: 2px solid #f3d5c2;
         }
+
+        /* Benchmark color palette */
+        :root {
+            --color-bench-0: #f97316;   /* orange */
+            --color-bench-1: #3b82f6;   /* blue */
+            --color-bench-2: #10b981;   /* emerald */
+            --color-bench-3: #f59e0b;   /* amber */
+            --color-bench-4: #8b5cf6;   /* violet */
+            --color-bench-5: #ec4899;   /* pink */
+            --color-bench-6: #06b6d4;   /* cyan */
+            --color-bench-7: #14b8a6;   /* teal */
+            --color-bench-8: #eab308;   /* lime */
+            --color-bench-9: #6366f1;   /* indigo */
+        }
+
+        .chart-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .chart-selector label {
+            font-weight: 600;
+            color: #f97316;
+        }
+
+        .chart-selector select {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .chart-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+            padding: 15px;
+            background: #faf7f3;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color-box {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .collapsible-section {
+            border: 1px solid #f3d5c2;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible-header {
+            padding: 15px;
+            background: #fef3f0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #f97316;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+
+        .collapsible-header:hover {
+            background: #fce8d8;
+        }
+
+        .collapsible-header.expanded {
+            background: #f5e8dd;
+        }
+
+        .collapsible-toggle {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .collapsible-toggle.expanded {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-header-content {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .collapsible-header-main {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .benchmark-status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .benchmark-status-pass {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .benchmark-status-fail {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .benchmark-status-check_fail {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .collapsible-content {
+            display: none;
+            padding: 20px;
+            background: white;
+        }
+
+        .collapsible-content.expanded {
+            display: block;
+        }
+
+        .collapsible-content > div {
+            display: grid;
+            gap: 30px;
+        }
     </style>
 </head>
 <body>
@@ -292,8 +440,6 @@
                 <select id="detail-run-select" onchange="loadRunDetail()">
                     <option value="">Select a run</option>
                 </select>
-                <select id="detail-bench-select" onchange="renderSelectedBenchDetail()" style="display:none">
-                </select>
             </div>
             <div id="detail-container"></div>
         </div>
@@ -317,10 +463,23 @@
         <div id="trends" class="tab-content">
             <h2>Evaluation Trends</h2>
             <div class="controls">
-                <select id="trends-bench-select" onchange="renderTrendsChart()">
+                <div class="chart-selector">
+                    <label for="trends-metric-select">Metric:</label>
+                    <select id="trends-metric-select" onchange="renderTrendsChart()">
+                        <option value="scoreAndCost">Score & Cost</option>
+                        <option value="cost">Cost vs Runs</option>
+                        <option value="duration">Duration vs Runs</option>
+                        <option value="apiCalls">API Calls vs Runs</option>
+                        <option value="totalTokens">Total Tokens vs Runs</option>
+                        <option value="cachedTokens">Cached Tokens vs Runs</option>
+                        <option value="cacheHitRate">Cache Hit Rate vs Runs</option>
+                    </select>
+                </div>
+                <select id="trends-bench-select" onchange="renderTrendsChart()" style="display:none">
                     <option value="">Select benchmark...</option>
                 </select>
             </div>
+            <div id="chart-legend-container"></div>
             <div class="chart-container">
                 <canvas id="trendsChart"></canvas>
             </div>
@@ -552,6 +711,7 @@
         }
 
         async function updateComparison() {
+            const metadata = await loadMetadata();
             const aId = document.getElementById('run-a-select').value;
             const bId = document.getElementById('run-b-select').value;
 
@@ -568,78 +728,112 @@
                 return;
             }
 
-            const aBenchId = document.getElementById('run-a-bench').value;
-            const bBenchId = document.getElementById('run-b-bench').value;
-            const benchA = getAllBenchmarks(resultA)[aBenchId] || null;
-            const benchB = getAllBenchmarks(resultB)[bBenchId] || null;
+            // Get run names
+            const runA = metadata.runs.find(r => r.run_id === aId);
+            const runB = metadata.runs.find(r => r.run_id === bId);
+            const runAName = runA ? (runA.name || `Run ${aId.substring(0, 8)}`) : aId;
+            const runBName = runB ? (runB.name || `Run ${bId.substring(0, 8)}`) : bId;
 
-            if (!benchA || !benchB) {
-                document.getElementById('comparison-container').innerHTML = '<p class="error">Missing benchmark data</p>';
+            // Get benchmarks for both runs
+            const benchsA = getAllBenchmarks(resultA);
+            const benchsB = getAllBenchmarks(resultB);
+            const allBenchIds = new Set([...Object.keys(benchsA), ...Object.keys(benchsB)]);
+
+            if (allBenchIds.size === 0) {
+                document.getElementById('comparison-container').innerHTML = '<p class="error">No benchmark data found</p>';
                 return;
             }
 
+            // If multiple benchmarks, show selector
+            const benchSelector = document.getElementById('run-a-bench');
+            const benchSelectorB = document.getElementById('run-b-bench');
+            
+            if (allBenchIds.size > 1) {
+                // Populate benchmark selector with all unique benchmarks
+                const benchArray = Array.from(allBenchIds);
+                benchSelector.innerHTML = benchArray.map(id => `<option value="${id}">${id}</option>`).join('');
+                benchSelector.style.display = 'none'; // Keep hidden for now - show all benchmarks instead
+                benchSelectorB.style.display = 'none';
+            } else {
+                benchSelector.style.display = 'none';
+                benchSelectorB.style.display = 'none';
+            }
+
             const delta = (a, b) => {
-                if (a === undefined || b === undefined) return null;
+                if (a === undefined || a === null || b === undefined || b === null) return null;
                 const d = b - a;
                 const pct = ((d / a) * 100).toFixed(1);
                 const cls = d > 0 ? 'positive' : 'negative';
                 return `<span class="${cls}">${d > 0 ? '+' : ''}${d.toFixed(3)} (${pct}%)</span>`;
             };
 
-            let html = `<table>
-                <thead>
-                    <tr>
-                        <th>Metric</th>
-                        <th>Run A</th>
-                        <th>Run B</th>
-                        <th>Delta</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Score</td>
-                        <td>${benchA.score || '—'}</td>
-                        <td>${benchB.score || '—'}</td>
-                        <td>${delta(benchA.score, benchB.score) || '—'}</td>
-                    </tr>
-                    <tr>
-                        <td>Cost (USD)</td>
-                        <td>${formatCost(benchA.cost_usd)}</td>
-                        <td>${formatCost(benchB.cost_usd)}</td>
-                        <td>${delta(benchA.cost_usd, benchB.cost_usd) || '—'}</td>
-                    </tr>
-                    <tr>
-                        <td>Duration (s)</td>
-                        <td>${formatDuration(benchA.duration_s)}</td>
-                        <td>${formatDuration(benchB.duration_s)}</td>
-                        <td>${delta(benchA.duration_s, benchB.duration_s) || '—'}</td>
-                    </tr>
-                    <tr>
-                        <td>Output Tokens</td>
-                        <td>${benchA.output_tokens || '—'}</td>
-                        <td>${benchB.output_tokens || '—'}</td>
-                        <td>${delta(benchA.output_tokens, benchB.output_tokens) || '—'}</td>
-                    </tr>
-                    <tr>
-                        <td>Cached Tokens</td>
-                        <td>${benchA.cached_tokens || '—'}</td>
-                        <td>${benchB.cached_tokens || '—'}</td>
-                        <td>${delta(benchA.cached_tokens, benchB.cached_tokens) || '—'}</td>
-                    </tr>
-                    <tr>
-                        <td>First Token Latency (s)</td>
-                        <td>${formatDuration(benchA.first_token_latency_s)}</td>
-                        <td>${formatDuration(benchB.first_token_latency_s)}</td>
-                        <td>${delta(benchA.first_token_latency_s, benchB.first_token_latency_s) || '—'}</td>
-                    </tr>
-                    <tr>
-                        <td>Syntax Error Rate</td>
-                        <td>${(benchA.syntax_error_rate || 0).toFixed(3)}</td>
-                        <td>${(benchB.syntax_error_rate || 0).toFixed(3)}</td>
-                        <td>${delta(benchA.syntax_error_rate, benchB.syntax_error_rate) || '—'}</td>
-                    </tr>
-                </tbody>
-            </table>`;
+            let html = `<div style="margin-bottom: 20px;">
+                <p class="info-text">Comparing: <strong>${runAName}</strong> vs <strong>${runBName}</strong></p>
+            </div>`;
+
+            // Create comparison table for each benchmark
+            for (const benchId of allBenchIds) {
+                const benchA = benchsA[benchId];
+                const benchB = benchsB[benchId];
+
+                html += `<div style="margin-bottom: 25px;">
+                    <h3 style="border-bottom: 1px solid #f3d5c2; padding-bottom: 8px;">Benchmark: ${benchId}</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>${runAName}</th>
+                                <th>${runBName}</th>
+                                <th>Delta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Score</td>
+                                <td>${benchA ? (benchA.score || '—') : 'N/A'}</td>
+                                <td>${benchB ? (benchB.score || '—') : 'N/A'}</td>
+                                <td>${benchA && benchB ? (delta(benchA.score, benchB.score) || '—') : '—'}</td>
+                            </tr>
+                            <tr>
+                                <td>Cost (USD)</td>
+                                <td>${benchA ? formatCost(benchA.cost_usd) : 'N/A'}</td>
+                                <td>${benchB ? formatCost(benchB.cost_usd) : 'N/A'}</td>
+                                <td>${benchA && benchB ? (delta(benchA.cost_usd, benchB.cost_usd) || '—') : '—'}</td>
+                            </tr>
+                            <tr>
+                                <td>Duration (s)</td>
+                                <td>${benchA ? formatDuration(benchA.duration_s) : 'N/A'}</td>
+                                <td>${benchB ? formatDuration(benchB.duration_s) : 'N/A'}</td>
+                                <td>${benchA && benchB ? (delta(benchA.duration_s, benchB.duration_s) || '—') : '—'}</td>
+                            </tr>
+                            <tr>
+                                <td>Output Tokens</td>
+                                <td>${benchA ? (benchA.output_tokens || '—') : 'N/A'}</td>
+                                <td>${benchB ? (benchB.output_tokens || '—') : 'N/A'}</td>
+                                <td>${benchA && benchB ? (delta(benchA.output_tokens, benchB.output_tokens) || '—') : '—'}</td>
+                            </tr>
+                            <tr>
+                                <td>Cached Tokens</td>
+                                <td>${benchA ? (benchA.cached_tokens || '—') : 'N/A'}</td>
+                                <td>${benchB ? (benchB.cached_tokens || '—') : 'N/A'}</td>
+                                <td>${benchA && benchB ? (delta(benchA.cached_tokens, benchB.cached_tokens) || '—') : '—'}</td>
+                            </tr>
+                            <tr>
+                                <td>First Token Latency (s)</td>
+                                <td>${benchA ? formatDuration(benchA.first_token_latency_s) : 'N/A'}</td>
+                                <td>${benchB ? formatDuration(benchB.first_token_latency_s) : 'N/A'}</td>
+                                <td>${benchA && benchB ? (delta(benchA.first_token_latency_s, benchB.first_token_latency_s) || '—') : '—'}</td>
+                            </tr>
+                            <tr>
+                                <td>Syntax Error Rate</td>
+                                <td>${benchA ? (benchA.syntax_error_rate || 0).toFixed(3) : 'N/A'}</td>
+                                <td>${benchB ? (benchB.syntax_error_rate || 0).toFixed(3) : 'N/A'}</td>
+                                <td>${benchA && benchB ? (delta(benchA.syntax_error_rate, benchB.syntax_error_rate) || '—') : '—'}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`;
+            }
 
             document.getElementById('comparison-container').innerHTML = html;
         }
@@ -652,137 +846,446 @@
             document.getElementById('comparison-container').innerHTML = '';
         }
 
-        async function renderTrendsChart() {
-            const metadata = await loadMetadata();
+        let benchmarkColorMap = {};
+
+        function getBenchmarkColor(benchmarkId, index) {
+            if (!benchmarkColorMap[benchmarkId]) {
+                const colorVar = `--color-bench-${index % 10}`;
+                const color = getComputedStyle(document.documentElement).getPropertyValue(colorVar).trim();
+                benchmarkColorMap[benchmarkId] = color || '#f97316';
+            }
+            return benchmarkColorMap[benchmarkId];
+        }
+
+        function aggregateBenchmarksByRun(runResults, metadata) {
+            const aggregated = {};
             const visibleRuns = metadata.runs.filter(r => !r.hidden);
 
-            // Collect all benchmark IDs across runs
-            const allBenchIds = new Set();
             for (const run of visibleRuns) {
-                const result = await fetchRunResult(run.run_id);
-                Object.keys(getAllBenchmarks(result)).forEach(id => allBenchIds.add(id));
+                const result = runResults[run.run_id];
+                if (!result) continue;
+
+                const benchmarks = Object.values(getAllBenchmarks(result));
+                if (benchmarks.length === 0) continue;
+
+                aggregated[run.run_id] = {
+                    runName: run.name || `Run ${run.run_id.substring(0, 8)}`,
+                    avgCost: benchmarks.reduce((sum, b) => sum + (b.cost_usd || 0), 0) / benchmarks.length,
+                    avgDuration: benchmarks.reduce((sum, b) => sum + (b.duration_s || 0), 0) / benchmarks.length,
+                    avgApiCalls: benchmarks.reduce((sum, b) => sum + (b.tokens?.num_calls || 0), 0) / benchmarks.length,
+                    avgTotalTokens: benchmarks.reduce((sum, b) => sum + (b.tokens?.total_tokens || 0), 0) / benchmarks.length,
+                    avgCachedTokens: benchmarks.reduce((sum, b) => sum + (b.tokens?.cached_tokens || 0), 0) / benchmarks.length,
+                    avgCacheHitRate: benchmarks.reduce((sum, b) => sum + (b.tokens?.cache_hit_rate || 0), 0) / benchmarks.length
+                };
             }
 
-            const benchSel = document.getElementById('trends-bench-select');
-            if (benchSel.options.length <= 1 && allBenchIds.size > 0) {
-                // Populate on first render
-                allBenchIds.forEach(id => {
-                    const opt = document.createElement('option');
-                    opt.value = id; opt.textContent = id;
-                    benchSel.appendChild(opt);
-                });
-                benchSel.value = [...allBenchIds][0]; // auto-select first
-            }
+            return aggregated;
+        }
 
-            const selectedBenchId = benchSel.value;
-            if (!selectedBenchId) return;
-
+        function getPerBenchmarkData(runResults, metadata) {
             const data = [];
+            const visibleRuns = metadata.runs.filter(r => !r.hidden);
+            let benchmarkIndex = {};
+
             for (const run of visibleRuns) {
-                const result = await fetchRunResult(run.run_id);
-                const bench = getAllBenchmarks(result)[selectedBenchId] || null;
-                if (bench) {
+                const result = runResults[run.run_id];
+                if (!result) continue;
+
+                const benchmarks = getAllBenchmarks(result);
+                Object.entries(benchmarks).forEach(([benchId, bench]) => {
+                    if (benchmarkIndex[benchId] === undefined) {
+                        benchmarkIndex[benchId] = Object.keys(benchmarkIndex).length;
+                    }
                     data.push({
-                        name: run.name || `Run ${run.run_id.substring(0, 8)}`,
-                        score: bench.score,
-                        cost: bench.cost_usd
+                        runName: run.name || `Run ${run.run_id.substring(0, 8)}`,
+                        benchId: benchId,
+                        benchIndex: benchmarkIndex[benchId],
+                        score: bench.score || 0,
+                        cost: bench.cost_usd || 0,
+                        duration: bench.duration_s || 0,
+                        apiCalls: bench.tokens?.num_calls || 0,
+                        totalTokens: bench.tokens?.total_tokens || 0,
+                        cachedTokens: bench.tokens?.cached_tokens || 0,
+                        cacheHitRate: bench.tokens?.cache_hit_rate || 0
                     });
-                }
+                });
             }
 
-            if (data.length === 0) return;
+            return { data, benchmarkIndex };
+        }
 
-            const ctx = document.getElementById('trendsChart');
-            if (currentChart) currentChart.destroy();
+        function getChartConfigByMetric(metric, data, benchmarkIndex, isPerBenchmark = false) {
+            const baseConfig = {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
+            };
 
-            currentChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.map(d => d.name),
-                    datasets: [
-                        {
-                            label: 'Score',
-                            data: data.map(d => d.score),
-                            borderColor: '#f97316',
-                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                            borderWidth: 2,
-                            yAxisID: 'y',
-                            tension: 0.4,
-                            pointBackgroundColor: '#f97316',
-                            pointBorderColor: 'white',
-                            pointBorderWidth: 2,
-                            pointRadius: 5
-                        },
-                        {
-                            label: 'Cost (USD)',
-                            data: data.map(d => d.cost),
+            if (metric === 'scoreAndCost' && isPerBenchmark) {
+                // Group data by benchmark for dual-axis chart
+                const benchGroups = {};
+                data.forEach(d => {
+                    if (!benchGroups[d.benchId]) benchGroups[d.benchId] = [];
+                    benchGroups[d.benchId].push(d);
+                });
+
+                const datasets = [];
+                const runNames = [...new Set(data.map(d => d.runName))];
+
+                Object.entries(benchGroups).forEach(([benchId, items]) => {
+                    const color = getBenchmarkColor(benchId, items[0].benchIndex);
+                    const scores = runNames.map(rn => {
+                        const item = items.find(i => i.runName === rn);
+                        return item ? item.score : null;
+                    });
+                    const costs = runNames.map(rn => {
+                        const item = items.find(i => i.runName === rn);
+                        return item ? item.cost : null;
+                    });
+
+                    datasets.push({
+                        label: `${benchId} (Score)`,
+                        data: scores,
+                        borderColor: color,
+                        backgroundColor: color + '1a',
+                        borderWidth: 2,
+                        yAxisID: 'y',
+                        tension: 0.4,
+                        pointBackgroundColor: color,
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 5
+                    });
+
+                    datasets.push({
+                        label: `${benchId} (Cost)`,
+                        data: costs,
+                        borderColor: color,
+                        backgroundColor: color + '1a',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        yAxisID: 'y1',
+                        tension: 0.4,
+                        pointBackgroundColor: color,
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 5
+                    });
+                });
+
+                return {
+                    type: 'line',
+                    data: {
+                        labels: runNames,
+                        datasets: datasets
+                    },
+                    options: {
+                        ...baseConfig,
+                        scales: {
+                            y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Score' } },
+                            y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Cost (USD)' }, grid: { drawOnChartArea: false } }
+                        }
+                    }
+                };
+            }
+
+            // Aggregated metrics
+            const aggregated = {};
+            data.forEach(d => {
+                if (!aggregated[d.runName]) {
+                    aggregated[d.runName] = { items: [] };
+                }
+                aggregated[d.runName].items.push(d);
+            });
+
+            const labels = Object.keys(aggregated);
+            const chartData = labels.map(label => aggregated[label].items);
+
+            const configs = {
+                cost: {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Avg Cost (USD)',
+                            data: chartData.map(items => items.reduce((sum, d) => sum + d.cost, 0) / items.length),
                             borderColor: '#f59e0b',
                             backgroundColor: 'rgba(245, 158, 11, 0.1)',
                             borderWidth: 2,
-                            yAxisID: 'y1',
                             tension: 0.4,
                             pointBackgroundColor: '#f59e0b',
                             pointBorderColor: 'white',
                             pointBorderWidth: 2,
                             pointRadius: 5
+                        }]
+                    },
+                    options: {
+                        ...baseConfig,
+                        scales: {
+                            y: { type: 'linear', display: true, title: { display: true, text: 'Cost (USD)' } }
                         }
-                    ]
+                    }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    scales: {
-                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Score' } },
-                        y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Cost (USD)' }, grid: { drawOnChartArea: false } }
+                duration: {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Avg Duration (s)',
+                            data: chartData.map(items => items.reduce((sum, d) => sum + d.duration, 0) / items.length),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointBackgroundColor: '#3b82f6',
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 2,
+                            pointRadius: 5
+                        }]
+                    },
+                    options: {
+                        ...baseConfig,
+                        scales: {
+                            y: { type: 'linear', display: true, title: { display: true, text: 'Duration (s)' } }
+                        }
+                    }
+                },
+                apiCalls: {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Avg API Calls',
+                            data: chartData.map(items => items.reduce((sum, d) => sum + d.apiCalls, 0) / items.length),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointBackgroundColor: '#10b981',
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 2,
+                            pointRadius: 5
+                        }]
+                    },
+                    options: {
+                        ...baseConfig,
+                        scales: {
+                            y: { type: 'linear', display: true, beginAtZero: true, title: { display: true, text: 'API Calls' } }
+                        }
+                    }
+                },
+                totalTokens: {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Avg Total Tokens',
+                            data: chartData.map(items => items.reduce((sum, d) => sum + d.totalTokens, 0) / items.length),
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointBackgroundColor: '#8b5cf6',
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 2,
+                            pointRadius: 5
+                        }]
+                    },
+                    options: {
+                        ...baseConfig,
+                        scales: {
+                            y: { type: 'linear', display: true, beginAtZero: true, title: { display: true, text: 'Total Tokens' } }
+                        }
+                    }
+                },
+                cachedTokens: {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Avg Cached Tokens',
+                            data: chartData.map(items => items.reduce((sum, d) => sum + d.cachedTokens, 0) / items.length),
+                            borderColor: '#ec4899',
+                            backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointBackgroundColor: '#ec4899',
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 2,
+                            pointRadius: 5
+                        }]
+                    },
+                    options: {
+                        ...baseConfig,
+                        scales: {
+                            y: { type: 'linear', display: true, beginAtZero: true, title: { display: true, text: 'Cached Tokens' } }
+                        }
+                    }
+                },
+                cacheHitRate: {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Avg Cache Hit Rate (%)',
+                            data: chartData.map(items => items.reduce((sum, d) => sum + d.cacheHitRate, 0) / items.length),
+                            borderColor: '#06b6d4',
+                            backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointBackgroundColor: '#06b6d4',
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 2,
+                            pointRadius: 5
+                        }]
+                    },
+                    options: {
+                        ...baseConfig,
+                        scales: {
+                            y: { type: 'linear', display: true, beginAtZero: true, max: 100, title: { display: true, text: 'Cache Hit Rate (%)' } }
+                        }
                     }
                 }
-            });
+            };
+
+            return configs[metric] || configs.cost;
         }
+
+        function renderChartLegend(benchmarkIndex) {
+            const legendContainer = document.getElementById('chart-legend-container');
+            if (Object.keys(benchmarkIndex).length <= 1) {
+                legendContainer.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="chart-legend">';
+            Object.entries(benchmarkIndex).forEach(([benchId, index]) => {
+                const color = getBenchmarkColor(benchId, index);
+                html += `<div class="legend-item"><div class="legend-color-box" style="background: ${color};"></div> <span>${benchId}</span></div>`;
+            });
+            html += '</div>';
+            legendContainer.innerHTML = html;
+        }
+
+        async function renderTrendsChart() {
+            const metadata = await loadMetadata();
+            const visibleRuns = metadata.runs.filter(r => !r.hidden);
+
+            // Fetch all run results
+            for (const run of visibleRuns) {
+                if (!runResults[run.run_id]) {
+                    await fetchRunResult(run.run_id);
+                }
+            }
+
+            // Get selected metric
+            const selectedMetric = document.getElementById('trends-metric-select').value || 'scoreAndCost';
+
+            // Get per-benchmark data
+            const { data, benchmarkIndex } = getPerBenchmarkData(runResults, metadata);
+
+            if (data.length === 0) return;
+
+            // Get chart config
+            const chartConfig = getChartConfigByMetric(selectedMetric, data, benchmarkIndex, true);
+
+            // Render chart
+            const ctx = document.getElementById('trendsChart');
+            if (currentChart) currentChart.destroy();
+
+            currentChart = new Chart(ctx, chartConfig);
+
+            // Show legend for Score & Cost
+            if (selectedMetric === 'scoreAndCost') {
+                renderChartLegend(benchmarkIndex);
+            } else {
+                document.getElementById('chart-legend-container').innerHTML = '';
+            }
+        }
+
+
 
         async function loadRunDetail() {
             const runId = document.getElementById('detail-run-select').value;
-            const benchSelect = document.getElementById('detail-bench-select');
             if (!runId) {
                 document.getElementById('detail-container').innerHTML = '';
-                benchSelect.style.display = 'none';
                 return;
             }
-            const result = await fetchRunResult(runId);
-            const benchmarks = getAllBenchmarks(result);
-            const benchIds = Object.keys(benchmarks);
-
-            // Populate benchmark selector
-            benchSelect.innerHTML = benchIds.map(id => `<option value="${id}">${id}</option>`).join('');
-            benchSelect.style.display = benchIds.length > 1 ? '' : 'none';
-
-            await renderSelectedBenchDetail();
-        }
-
-        async function renderSelectedBenchDetail() {
-            const runId = document.getElementById('detail-run-select').value;
-            const benchId = document.getElementById('detail-bench-select').value;
-            if (!runId) return;
 
             const metadata = await loadMetadata();
             const run = metadata.runs.find(r => r.run_id === runId);
             const result = await fetchRunResult(runId);
             const benchmarks = getAllBenchmarks(result);
-            const bench = benchmarks[benchId] || null;
+            const benchIds = Object.keys(benchmarks);
 
-            if (!result || !bench) {
-                document.getElementById('detail-container').innerHTML = '<p class="error">Failed to load run details</p>';
+            if (benchIds.length === 0) {
+                document.getElementById('detail-container').innerHTML = '<p class="error">No benchmarks found for this run</p>';
                 return;
             }
 
+            let html = '<div>';
+            benchIds.forEach((benchId, index) => {
+                const bench = benchmarks[benchId];
+                const score = bench.score || '—';
+                const cost = formatCost(bench.cost_usd);
+                const duration = formatDuration(bench.duration_s);
+                const scoreLabel = bench.score_label || 'unknown';
+                const statusClass = `benchmark-status-${scoreLabel}`;
+
+                html += `
+                    <div class="collapsible-section" data-bench-id="${benchId}" data-run-id="${runId}">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                            <div class="collapsible-header-content">
+                                <div class="collapsible-header-main">
+                                    <span class="collapsible-toggle">▼</span>
+                                    <strong>${benchId}</strong>
+                                    <span class="benchmark-status-badge ${statusClass}">${scoreLabel}</span>
+                                </div>
+                                <div style="display: flex; gap: 20px; font-size: 0.9em; color: #8b6f47;">
+                                    <span><strong>Score:</strong> ${score}</span>
+                                    <span><strong>Cost:</strong> ${cost}</span>
+                                    <span><strong>Duration:</strong> ${duration}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapsible-content" data-bench-id="${benchId}">
+                            <div></div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            document.getElementById('detail-container').innerHTML = html;
+
+            // Render content for each benchmark section
+            for (const benchId of benchIds) {
+                await renderBenchmarkDetail(runId, benchId, run);
+            }
+        }
+
+        async function renderBenchmarkDetail(runId, benchId, run) {
+            const result = await fetchRunResult(runId);
+            const benchmarks = getAllBenchmarks(result);
+            const bench = benchmarks[benchId];
+
+            if (!bench) return;
+
             const tokens = bench.tokens || {};
-            let html = '<div style="display: grid; gap: 30px;">';
+            let html = '';
 
             html += '<div>';
             html += '<h3>Meta & Summary</h3>';
             html += `<table>
                 <tr><td><strong>Run Name</strong></td><td>${run.name || '(Unnamed)'}</td></tr>
-                <tr><td><strong>GitHub Run ID</strong></td><td><code>${runId}</code></td></tr>
+                <tr><td><strong>Benchmark</strong></td><td><code>${benchId}</code></td></tr>
+                <tr><td><strong>Run ID</strong></td><td><code>${runId}</code></td></tr>
                 <tr><td><strong>Commit</strong></td><td><code>${result.meta?.commit_sha || '—'}</code></td></tr>
                 <tr><td><strong>Branch</strong></td><td>${result.meta?.branch || '—'}</td></tr>
                 <tr><td><strong>Date</strong></td><td>${formatDate(result.meta?.timestamp)}</td></tr>
@@ -856,8 +1359,21 @@
                 html += '</div>';
             }
 
-            html += '</div>';
-            document.getElementById('detail-container').innerHTML = html;
+            // Update the collapsible content
+            const contentDiv = document.querySelector(`[data-bench-id="${benchId}"] .collapsible-content div`);
+            if (contentDiv) {
+                contentDiv.innerHTML = html;
+            }
+        }
+
+        function toggleCollapsible(header) {
+            header.classList.toggle('expanded');
+            header.querySelector('.collapsible-toggle').classList.toggle('expanded');
+            header.nextElementSibling.classList.toggle('expanded');
+        }
+
+        async function renderSelectedBenchDetail() {
+            // This function is no longer used, but kept for backward compatibility
         }
 
         async function loadDashboard() {
