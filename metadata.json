@@ -1,11 +1,6 @@
 {
   "runs": [
     {
-      "run_id": "24936334982",
-      "name": "eval-1",
-      "hidden": false
-    },
-    {
       "run_id": "24938582840",
       "name": "eval-2",
       "hidden": false
