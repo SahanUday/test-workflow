@@ -466,7 +466,6 @@
                 <div class="chart-selector">
                     <label for="trends-metric-select">Metric:</label>
                     <select id="trends-metric-select" onchange="renderTrendsChart()">
-                        <option value="scoreAndCost">Score & Cost</option>
                         <option value="cost">Cost vs Runs</option>
                         <option value="duration">Duration vs Runs</option>
                         <option value="apiCalls">API Calls vs Runs</option>
@@ -927,74 +926,6 @@
                 }
             };
 
-            if (metric === 'scoreAndCost' && isPerBenchmark) {
-                // Group data by benchmark for dual-axis chart
-                const benchGroups = {};
-                data.forEach(d => {
-                    if (!benchGroups[d.benchId]) benchGroups[d.benchId] = [];
-                    benchGroups[d.benchId].push(d);
-                });
-
-                const datasets = [];
-                const runNames = [...new Set(data.map(d => d.runName))];
-
-                Object.entries(benchGroups).forEach(([benchId, items]) => {
-                    const color = getBenchmarkColor(benchId, items[0].benchIndex);
-                    const scores = runNames.map(rn => {
-                        const item = items.find(i => i.runName === rn);
-                        return item ? item.score : null;
-                    });
-                    const costs = runNames.map(rn => {
-                        const item = items.find(i => i.runName === rn);
-                        return item ? item.cost : null;
-                    });
-
-                    datasets.push({
-                        label: `${benchId} (Score)`,
-                        data: scores,
-                        borderColor: color,
-                        backgroundColor: color + '1a',
-                        borderWidth: 2,
-                        yAxisID: 'y',
-                        tension: 0.4,
-                        pointBackgroundColor: color,
-                        pointBorderColor: 'white',
-                        pointBorderWidth: 2,
-                        pointRadius: 5
-                    });
-
-                    datasets.push({
-                        label: `${benchId} (Cost)`,
-                        data: costs,
-                        borderColor: color,
-                        backgroundColor: color + '1a',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        yAxisID: 'y1',
-                        tension: 0.4,
-                        pointBackgroundColor: color,
-                        pointBorderColor: 'white',
-                        pointBorderWidth: 2,
-                        pointRadius: 5
-                    });
-                });
-
-                return {
-                    type: 'line',
-                    data: {
-                        labels: runNames,
-                        datasets: datasets
-                    },
-                    options: {
-                        ...baseConfig,
-                        scales: {
-                            y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Score' } },
-                            y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Cost (USD)' }, grid: { drawOnChartArea: false } }
-                        }
-                    }
-                };
-            }
-
             // Aggregated metrics
             const aggregated = {};
             data.forEach(d => {
@@ -1157,22 +1088,6 @@
             return configs[metric] || configs.cost;
         }
 
-        function renderChartLegend(benchmarkIndex) {
-            const legendContainer = document.getElementById('chart-legend-container');
-            if (Object.keys(benchmarkIndex).length <= 1) {
-                legendContainer.innerHTML = '';
-                return;
-            }
-
-            let html = '<div class="chart-legend">';
-            Object.entries(benchmarkIndex).forEach(([benchId, index]) => {
-                const color = getBenchmarkColor(benchId, index);
-                html += `<div class="legend-item"><div class="legend-color-box" style="background: ${color};"></div> <span>${benchId}</span></div>`;
-            });
-            html += '</div>';
-            legendContainer.innerHTML = html;
-        }
-
         async function renderTrendsChart() {
             const metadata = await loadMetadata();
             const visibleRuns = metadata.runs.filter(r => !r.hidden);
@@ -1185,7 +1100,7 @@
             }
 
             // Get selected metric
-            const selectedMetric = document.getElementById('trends-metric-select').value || 'scoreAndCost';
+            const selectedMetric = document.getElementById('trends-metric-select').value || 'cost';
 
             // Get per-benchmark data
             const { data, benchmarkIndex } = getPerBenchmarkData(runResults, metadata);
@@ -1201,12 +1116,8 @@
 
             currentChart = new Chart(ctx, chartConfig);
 
-            // Show legend for Score & Cost
-            if (selectedMetric === 'scoreAndCost') {
-                renderChartLegend(benchmarkIndex);
-            } else {
-                document.getElementById('chart-legend-container').innerHTML = '';
-            }
+            // Clear legend
+            document.getElementById('chart-legend-container').innerHTML = '';
         }
 
 
