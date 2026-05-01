@@ -1,0 +1,1040 @@
+{
+  "benchmark_suite": "jasecibench",
+  "model": "claude-sonnet-4-5-20250929",
+  "per_task_metrics": {
+    "0001-add-modulo-operator": {
+      "task_id": "0001-add-modulo-operator",
+      "duration_s": 61.59,
+      "tokens": {
+        "input_tokens": 143007,
+        "output_tokens": 2184,
+        "cached_tokens": 123269,
+        "total_tokens": 145191,
+        "total_cost": 0.148577,
+        "num_calls": 15,
+        "effective_input_tokens": 19738,
+        "avg_input_per_call": 9533,
+        "avg_output_per_call": 145,
+        "cache_hit_rate": 86.2,
+        "avg_cost_per_call": 0.009905
+      },
+      "cost_usd": 0.148577,
+      "num_llm_calls": 15,
+      "output_tokens": 2184,
+      "cached_tokens": 123269,
+      "files_written": [
+        "/tmp/jasecibench/suite/agent/basic/calculator/jaclang/app/server/compute.sv.jac"
+      ],
+      "files_scaffolded": [],
+      "tool_timeline": [
+        {
+          "step": 1,
+          "tool": "read",
+          "args": "app/server/compute.sv.jac",
+          "status": "done",
+          "duration_ms": 2429,
+          "result_preview": ""
+        },
+        {
+          "step": 2,
+          "tool": "glob",
+          "args": "'*.sv.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 0 files"
+        },
+        {
+          "step": 3,
+          "tool": "think",
+          "args": "I need to find the actual project directory. Let me check what's in the current ...",
+          "status": "done",
+          "duration_ms": 3580,
+          "result_preview": ""
+        },
+        {
+          "step": 4,
+          "tool": "list",
+          "args": " (*)",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 3 files"
+        },
+        {
+          "step": 5,
+          "tool": "glob",
+          "args": "'**/*.sv.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 2 files"
+        },
+        {
+          "step": 6,
+          "tool": "read",
+          "args": "server/compute.sv.jac",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> 93 lines"
+        },
+        {
+          "step": 7,
+          "tool": "think",
+          "args": "Perfect! I can see the Compute walker implementation. I need to add a modulo ope...",
+          "status": "done",
+          "duration_ms": 6639,
+          "result_preview": ""
+        },
+        {
+          "step": 8,
+          "tool": "edit",
+          "args": "server/compute.sv.jac",
+          "status": "done",
+          "duration_ms": 1,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 9,
+          "tool": "jac_check",
+          "args": "server/compute.sv.jac",
+          "status": "done",
+          "duration_ms": 27,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 10,
+          "tool": "read",
+          "args": "server/compute.sv.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 100 lines"
+        },
+        {
+          "step": 11,
+          "tool": "glob",
+          "args": "'**/baseline.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 files"
+        },
+        {
+          "step": 12,
+          "tool": "jac_run",
+          "args": "tests/baseline.jac",
+          "status": "error",
+          "duration_ms": 556,
+          "result_preview": "-> exit 1"
+        },
+        {
+          "step": 13,
+          "tool": "think",
+          "args": "The test file needs to be run from the correct directory. Let me check where the...",
+          "status": "done",
+          "duration_ms": 2898,
+          "result_preview": ""
+        },
+        {
+          "step": 14,
+          "tool": "bash",
+          "args": "cd  && jac run tests/baseline.jac",
+          "status": "done",
+          "duration_ms": 551,
+          "result_preview": "-> 1 lines"
+        }
+      ],
+      "tool_breakdown": {
+        "read": {
+          "count": 3,
+          "total_ms": 2431,
+          "errors": 0
+        },
+        "glob": {
+          "count": 3,
+          "total_ms": 0,
+          "errors": 0
+        },
+        "think": {
+          "count": 3,
+          "total_ms": 13117,
+          "errors": 0
+        },
+        "list": {
+          "count": 1,
+          "total_ms": 0,
+          "errors": 0
+        },
+        "edit": {
+          "count": 1,
+          "total_ms": 1,
+          "errors": 0
+        },
+        "jac_check": {
+          "count": 1,
+          "total_ms": 27,
+          "errors": 0
+        },
+        "jac_run": {
+          "count": 1,
+          "total_ms": 556,
+          "errors": 1
+        },
+        "bash": {
+          "count": 1,
+          "total_ms": 551,
+          "errors": 0
+        }
+      },
+      "turn_summaries": [
+        {
+          "tools_count": 14,
+          "files_modified": [
+            "server/compute.sv.jac"
+          ],
+          "errors": 1,
+          "duration_s": 58.8,
+          "timestamp": 1777646554.2562456,
+          "event_type": "turn_summary"
+        }
+      ],
+      "check_stats": {
+        "total": 0,
+        "pass": 0,
+        "fail": 0,
+        "first_pass_rate": null
+      },
+      "context_compactions": 0,
+      "error": null,
+      "score": 1.0,
+      "score_label": "vault_pass",
+      "vault_score": 1.0,
+      "vault_status": "PASS"
+    },
+    "0002-add-backspace-key": {
+      "task_id": "0002-add-backspace-key",
+      "duration_s": 92.1,
+      "tokens": {
+        "input_tokens": 306969,
+        "output_tokens": 4916,
+        "cached_tokens": 272563,
+        "total_tokens": 311885,
+        "total_cost": 0.291077,
+        "num_calls": 22,
+        "effective_input_tokens": 34406,
+        "avg_input_per_call": 13953,
+        "avg_output_per_call": 223,
+        "cache_hit_rate": 88.8,
+        "avg_cost_per_call": 0.013231
+      },
+      "cost_usd": 0.291077,
+      "num_llm_calls": 22,
+      "output_tokens": 4916,
+      "cached_tokens": 272563,
+      "files_written": [
+        "/tmp/jasecibench/suite/agent/basic/calculator/jaclang/app/client/components/Keypad.cl.jac",
+        "/tmp/jasecibench/suite/agent/basic/calculator/jaclang/app/client/App.cl.jac",
+        "/tmp/jasecibench/suite/agent/basic/calculator/jaclang/app/client/App.impl.jac"
+      ],
+      "files_scaffolded": [],
+      "tool_timeline": [
+        {
+          "step": 1,
+          "tool": "think",
+          "args": "\nThe user wants me to:\n1. Add a backspace key (\u232b) to the Keypad component with d...",
+          "status": "done",
+          "duration_ms": 1871,
+          "result_preview": ""
+        },
+        {
+          "step": 2,
+          "tool": "read",
+          "args": "app/client/components/Keypad.cl.jac",
+          "status": "done",
+          "duration_ms": 1705,
+          "result_preview": ""
+        },
+        {
+          "step": 3,
+          "tool": "glob",
+          "args": "'*.cl.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 0 files"
+        },
+        {
+          "step": 4,
+          "tool": "list",
+          "args": " (*)",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 3 files"
+        },
+        {
+          "step": 5,
+          "tool": "glob",
+          "args": "'**/*.cl.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 3 files"
+        },
+        {
+          "step": 6,
+          "tool": "read",
+          "args": "client/components/Keypad.cl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 98 lines"
+        },
+        {
+          "step": 7,
+          "tool": "read",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 236 lines"
+        },
+        {
+          "step": 8,
+          "tool": "glob",
+          "args": "'**/*.impl.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 files"
+        },
+        {
+          "step": 9,
+          "tool": "read",
+          "args": "client/App.impl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 109 lines"
+        },
+        {
+          "step": 10,
+          "tool": "edit",
+          "args": "client/components/Keypad.cl.jac",
+          "status": "done",
+          "duration_ms": 4,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 11,
+          "tool": "jac_check",
+          "args": "client/components/Keypad.cl.jac",
+          "status": "done",
+          "duration_ms": 26,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 12,
+          "tool": "edit",
+          "args": "client/components/Keypad.cl.jac",
+          "status": "done",
+          "duration_ms": 2,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 13,
+          "tool": "jac_check",
+          "args": "client/components/Keypad.cl.jac",
+          "status": "done",
+          "duration_ms": 29,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 14,
+          "tool": "edit",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 1,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 15,
+          "tool": "jac_check",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 85,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 16,
+          "tool": "edit",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 17,
+          "tool": "jac_check",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 89,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 18,
+          "tool": "edit",
+          "args": "client/App.impl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 19,
+          "tool": "jac_check",
+          "args": "client/App.impl.jac",
+          "status": "done",
+          "duration_ms": 32,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 20,
+          "tool": "bash",
+          "args": "jac check main.jac",
+          "status": "done",
+          "duration_ms": 1875,
+          "result_preview": "-> 3 lines"
+        },
+        {
+          "step": 21,
+          "tool": "glob",
+          "args": "'**/baseline.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 files"
+        },
+        {
+          "step": 22,
+          "tool": "jac_run",
+          "args": "tests/baseline.jac",
+          "status": "error",
+          "duration_ms": 328,
+          "result_preview": "-> exit 1"
+        },
+        {
+          "step": 23,
+          "tool": "bash",
+          "args": "jac test tests/baseline.jac",
+          "status": "done",
+          "duration_ms": 357,
+          "result_preview": "-> 34 lines"
+        },
+        {
+          "step": 24,
+          "tool": "read",
+          "args": "client/components/Keypad.cl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 115 lines"
+        },
+        {
+          "step": 25,
+          "tool": "read",
+          "args": "client/App.impl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 121 lines"
+        }
+      ],
+      "tool_breakdown": {
+        "think": {
+          "count": 1,
+          "total_ms": 1871,
+          "errors": 0
+        },
+        "read": {
+          "count": 6,
+          "total_ms": 1705,
+          "errors": 0
+        },
+        "glob": {
+          "count": 4,
+          "total_ms": 0,
+          "errors": 0
+        },
+        "list": {
+          "count": 1,
+          "total_ms": 0,
+          "errors": 0
+        },
+        "edit": {
+          "count": 5,
+          "total_ms": 7,
+          "errors": 0
+        },
+        "jac_check": {
+          "count": 5,
+          "total_ms": 261,
+          "errors": 0
+        },
+        "bash": {
+          "count": 2,
+          "total_ms": 2232,
+          "errors": 0
+        },
+        "jac_run": {
+          "count": 1,
+          "total_ms": 328,
+          "errors": 1
+        }
+      },
+      "turn_summaries": [
+        {
+          "tools_count": 25,
+          "files_modified": [
+            "client/components/Keypad.cl.jac",
+            "client/App.cl.jac",
+            "client/App.impl.jac"
+          ],
+          "errors": 1,
+          "duration_s": 88.8,
+          "timestamp": 1777646645.796251,
+          "event_type": "turn_summary"
+        }
+      ],
+      "check_stats": {
+        "total": 0,
+        "pass": 0,
+        "fail": 0,
+        "first_pass_rate": null
+      },
+      "context_compactions": 0,
+      "error": null,
+      "score": 1.0,
+      "score_label": "vault_pass",
+      "vault_score": 1.0,
+      "vault_status": "PASS"
+    },
+    "0003-add-history-sum": {
+      "task_id": "0003-add-history-sum",
+      "duration_s": 188.52,
+      "tokens": {
+        "input_tokens": 861350,
+        "output_tokens": 8620,
+        "cached_tokens": 806152,
+        "total_tokens": 869970,
+        "total_cost": 0.583959,
+        "num_calls": 44,
+        "effective_input_tokens": 55198,
+        "avg_input_per_call": 19576,
+        "avg_output_per_call": 195,
+        "cache_hit_rate": 93.6,
+        "avg_cost_per_call": 0.013272
+      },
+      "cost_usd": 0.583959,
+      "num_llm_calls": 44,
+      "output_tokens": 8620,
+      "cached_tokens": 806152,
+      "files_written": [
+        "/tmp/jasecibench/suite/agent/basic/calculator/jaclang/app/server/compute.sv.jac",
+        "/tmp/jasecibench/suite/agent/basic/calculator/jaclang/app/client/App.cl.jac",
+        "/tmp/jasecibench/suite/agent/basic/calculator/jaclang/app/client/App.impl.jac",
+        "/tmp/jasecibench/suite/agent/basic/calculator/jaclang/app/test_sum_history.jac"
+      ],
+      "files_scaffolded": [],
+      "tool_timeline": [
+        {
+          "step": 1,
+          "tool": "think",
+          "args": "\nThe user wants to add a new feature that:\n1. Server side: New walker `SumHistor...",
+          "status": "done",
+          "duration_ms": 3785,
+          "result_preview": ""
+        },
+        {
+          "step": 2,
+          "tool": "read",
+          "args": "app/server/compute.sv.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": ""
+        },
+        {
+          "step": 3,
+          "tool": "read",
+          "args": "app/client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": ""
+        },
+        {
+          "step": 4,
+          "tool": "read",
+          "args": "app/client/App.impl.jac",
+          "status": "done",
+          "duration_ms": 2139,
+          "result_preview": ""
+        },
+        {
+          "step": 5,
+          "tool": "glob",
+          "args": "'*.sv.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 0 files"
+        },
+        {
+          "step": 6,
+          "tool": "list",
+          "args": " (*)",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 3 files"
+        },
+        {
+          "step": 7,
+          "tool": "glob",
+          "args": "'**/*.sv.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 2 files"
+        },
+        {
+          "step": 8,
+          "tool": "read",
+          "args": "server/compute.sv.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 100 lines"
+        },
+        {
+          "step": 9,
+          "tool": "glob",
+          "args": "'**/*.cl.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 3 files"
+        },
+        {
+          "step": 10,
+          "tool": "read",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 238 lines"
+        },
+        {
+          "step": 11,
+          "tool": "read",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 238 lines"
+        },
+        {
+          "step": 12,
+          "tool": "glob",
+          "args": "'**/*.impl.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 files"
+        },
+        {
+          "step": 13,
+          "tool": "read",
+          "args": "client/App.impl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 121 lines"
+        },
+        {
+          "step": 14,
+          "tool": "think",
+          "args": "\nNow I understand the structure. I need to:\n\n1. Add the `SumHistory` walker to `...",
+          "status": "done",
+          "duration_ms": 6331,
+          "result_preview": ""
+        },
+        {
+          "step": 15,
+          "tool": "edit",
+          "args": "server/compute.sv.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 16,
+          "tool": "jac_check",
+          "args": "server/compute.sv.jac",
+          "status": "done",
+          "duration_ms": 30,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 17,
+          "tool": "edit",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 18,
+          "tool": "jac_check",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 91,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 19,
+          "tool": "edit",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 1,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 20,
+          "tool": "jac_check",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 90,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 21,
+          "tool": "edit",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 3,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 22,
+          "tool": "jac_check",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 95,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 23,
+          "tool": "edit",
+          "args": "client/App.impl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 24,
+          "tool": "jac_check",
+          "args": "client/App.impl.jac",
+          "status": "done",
+          "duration_ms": 31,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 25,
+          "tool": "bash",
+          "args": "jac check main.jac",
+          "status": "done",
+          "duration_ms": 1869,
+          "result_preview": "-> 3 lines"
+        },
+        {
+          "step": 26,
+          "tool": "glob",
+          "args": "'**/baseline.jac' in ",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 files"
+        },
+        {
+          "step": 27,
+          "tool": "jac_run",
+          "args": "tests/baseline.jac",
+          "status": "error",
+          "duration_ms": 329,
+          "result_preview": "-> exit 1"
+        },
+        {
+          "step": 28,
+          "tool": "bash",
+          "args": "cd  && jac test tests/baseline.jac",
+          "status": "done",
+          "duration_ms": 554,
+          "result_preview": "-> 34 lines"
+        },
+        {
+          "step": 29,
+          "tool": "think",
+          "args": "\nGreat! The baseline tests pass. Now let me verify the implementation is correct...",
+          "status": "done",
+          "duration_ms": 4328,
+          "result_preview": ""
+        },
+        {
+          "step": 30,
+          "tool": "edit",
+          "args": "client/App.impl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 1 edit(s)"
+        },
+        {
+          "step": 31,
+          "tool": "jac_check",
+          "args": "client/App.impl.jac",
+          "status": "done",
+          "duration_ms": 32,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 32,
+          "tool": "bash",
+          "args": "jac check main.jac",
+          "status": "done",
+          "duration_ms": 1828,
+          "result_preview": "-> 3 lines"
+        },
+        {
+          "step": 33,
+          "tool": "bash",
+          "args": "cd  && jac test tests/baseline.jac",
+          "status": "done",
+          "duration_ms": 362,
+          "result_preview": "-> 34 lines"
+        },
+        {
+          "step": 34,
+          "tool": "write",
+          "args": "test_sum_history.jac",
+          "status": "done",
+          "duration_ms": 300,
+          "result_preview": "-> 25 lines"
+        },
+        {
+          "step": 35,
+          "tool": "jac_check",
+          "args": "test_sum_history.jac",
+          "status": "done",
+          "duration_ms": 4,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 36,
+          "tool": "bash",
+          "args": "cd  && jac test test_sum_history.jac",
+          "status": "done",
+          "duration_ms": 346,
+          "result_preview": "-> 35 lines"
+        },
+        {
+          "step": 37,
+          "tool": "bash",
+          "args": "jac run test_sum_history.jac",
+          "status": "done",
+          "duration_ms": 360,
+          "result_preview": "-> 123 lines"
+        },
+        {
+          "step": 38,
+          "tool": "write",
+          "args": "test_sum_history.jac",
+          "status": "done",
+          "duration_ms": 300,
+          "result_preview": "-> 25 lines"
+        },
+        {
+          "step": 39,
+          "tool": "jac_check",
+          "args": "test_sum_history.jac",
+          "status": "done",
+          "duration_ms": 10,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 40,
+          "tool": "bash",
+          "args": "jac run test_sum_history.jac",
+          "status": "done",
+          "duration_ms": 366,
+          "result_preview": "-> 25 lines"
+        },
+        {
+          "step": 41,
+          "tool": "read",
+          "args": "tests/baseline.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 88 lines"
+        },
+        {
+          "step": 42,
+          "tool": "write",
+          "args": "test_sum_history.jac",
+          "status": "done",
+          "duration_ms": 300,
+          "result_preview": "-> 25 lines"
+        },
+        {
+          "step": 43,
+          "tool": "jac_check",
+          "args": "test_sum_history.jac",
+          "status": "done",
+          "duration_ms": 11,
+          "result_preview": "-> ok"
+        },
+        {
+          "step": 44,
+          "tool": "bash",
+          "args": "rm test_sum_history.jac",
+          "status": "done",
+          "duration_ms": 3,
+          "result_preview": "-> 1 lines"
+        },
+        {
+          "step": 45,
+          "tool": "think",
+          "args": "\nLet me verify the implementation is correct by examining the files and then run...",
+          "status": "done",
+          "duration_ms": 2763,
+          "result_preview": ""
+        },
+        {
+          "step": 46,
+          "tool": "read",
+          "args": "server/compute.sv.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 116 lines"
+        },
+        {
+          "step": 47,
+          "tool": "read",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 255 lines"
+        },
+        {
+          "step": 48,
+          "tool": "read",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 255 lines"
+        },
+        {
+          "step": 49,
+          "tool": "read",
+          "args": "client/App.impl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 127 lines"
+        },
+        {
+          "step": 50,
+          "tool": "read",
+          "args": "client/App.cl.jac",
+          "status": "done",
+          "duration_ms": 0,
+          "result_preview": "-> 255 lines"
+        },
+        {
+          "step": 51,
+          "tool": "bash",
+          "args": "jac check main.jac",
+          "status": "done",
+          "duration_ms": 1841,
+          "result_preview": "-> 3 lines"
+        },
+        {
+          "step": 52,
+          "tool": "bash",
+          "args": "cd  && jac test tests/baseline.jac",
+          "status": "done",
+          "duration_ms": 353,
+          "result_preview": "-> 34 lines"
+        }
+      ],
+      "tool_breakdown": {
+        "think": {
+          "count": 4,
+          "total_ms": 17207,
+          "errors": 0
+        },
+        "read": {
+          "count": 13,
+          "total_ms": 2139,
+          "errors": 0
+        },
+        "glob": {
+          "count": 5,
+          "total_ms": 0,
+          "errors": 0
+        },
+        "list": {
+          "count": 1,
+          "total_ms": 0,
+          "errors": 0
+        },
+        "edit": {
+          "count": 6,
+          "total_ms": 4,
+          "errors": 0
+        },
+        "jac_check": {
+          "count": 9,
+          "total_ms": 394,
+          "errors": 0
+        },
+        "bash": {
+          "count": 10,
+          "total_ms": 7882,
+          "errors": 0
+        },
+        "jac_run": {
+          "count": 1,
+          "total_ms": 329,
+          "errors": 1
+        },
+        "write": {
+          "count": 3,
+          "total_ms": 900,
+          "errors": 0
+        }
+      },
+      "turn_summaries": [
+        {
+          "tools_count": 52,
+          "files_modified": [
+            "server/compute.sv.jac",
+            "client/App.cl.jac",
+            "client/App.impl.jac",
+            "test_sum_history.jac"
+          ],
+          "errors": 1,
+          "duration_s": 185.3,
+          "timestamp": 1777646834.4103825,
+          "event_type": "turn_summary"
+        }
+      ],
+      "check_stats": {
+        "total": 0,
+        "pass": 0,
+        "fail": 0,
+        "first_pass_rate": null
+      },
+      "context_compactions": 0,
+      "error": null,
+      "score": 1.0,
+      "score_label": "vault_pass",
+      "vault_score": 1.0,
+      "vault_status": "PASS"
+    }
+  },
+  "vault_summary": {
+    "tasks_passed": 3,
+    "tasks_total": 3,
+    "all_passed": true
+  },
+  "meta": {
+    "run_id": "25218574601",
+    "staging_sha": "c76d72fba16cee3dab24922431f145ade8794d8e",
+    "staging_repo": "SahanUday/JaseciBench",
+    "staging_branch": "eval/25218574601",
+    "timestamp": "20260501T144818Z"
+  }
+}
