@@ -46,6 +46,44 @@
       "hidden": false,
       "timestamp": "20260504T112737Z",
       "benchmarks": {}
+    },
+    {
+      "run_id": "25338670738",
+      "name": "eval-10",
+      "hidden": false,
+      "timestamp": "20260504T192855Z",
+      "benchmarks": {
+        "0001-add-modulo-operator": {
+          "score": 1.0,
+          "score_label": "vault_pass",
+          "cost_usd": 0.139799,
+          "duration_s": 45.1,
+          "num_calls": 11,
+          "total_tokens": 113590,
+          "cached_tokens": 89971,
+          "cache_hit_rate": 80.4
+        },
+        "0002-add-backspace-key": {
+          "score": 1.0,
+          "score_label": "vault_pass",
+          "cost_usd": 0.239498,
+          "duration_s": 83.09,
+          "num_calls": 20,
+          "total_tokens": 265752,
+          "cached_tokens": 233768,
+          "cache_hit_rate": 89.2
+        },
+        "0003-add-history-sum": {
+          "score": 1.0,
+          "score_label": "vault_pass",
+          "cost_usd": 0.248364,
+          "duration_s": 82.99,
+          "num_calls": 18,
+          "total_tokens": 263705,
+          "cached_tokens": 229221,
+          "cache_hit_rate": 88.3
+        }
+      }
     }
   ]
 }
